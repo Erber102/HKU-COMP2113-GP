@@ -1,14 +1,37 @@
-prg=game
-flg=-pthread
-obj=main.o monster.o combat.o panel.o
+# compiler setting
+CXX := g++
+CXXFLAGS := -Wall -Wextra -std=c++11 -I. -IMay_system -INight_market_Joey
+TARGET := game
 
-$(prg): $(obj)
-	g++ -o $(prg) $(flg) $^
+# list all source files
+SOURCES := main.cpp \
+           Game.cpp \
+           Player.cpp \
+           combat.cpp \
+           monster.cpp \
+           panel.cpp \
+           May_system/DayPhase.cpp \
+           May_system/Event.cpp \
+           May_system/Map.cpp
 
-%.o: %.cpp %.h
-	g++ -c $<
+# object list
+OBJECTS := $(addprefix build/,$(SOURCES:.cpp=.o))
 
+# main rules
+$(TARGET): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $@
+
+# general compile rule
+build/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# clean command
 clean:
-	rm -rf $(obj) $(prg)
+	rm -rf build $(TARGET)
 
-.PHONY: clean
+# run command
+run: $(TARGET)
+	./$(TARGET)
+
+.PHONY: clean run

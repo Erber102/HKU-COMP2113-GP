@@ -1,0 +1,22 @@
+# compile & output
+build/
+*.o
+*.a
+*.so
+*.exe
+game
+
+# dependencies
+*.d
+
+# system files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# backup files
+*~
+*.bak

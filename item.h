@@ -19,7 +19,7 @@ const int DIFFICULTY_NORMAL = 1;
 const int DIFFICULTY_HARD = 2;
 
 // Item structure
-struct Item {
+struct Item{
     int id;
     string name;
     string description;

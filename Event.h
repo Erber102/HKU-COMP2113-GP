@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-// 定义事件的类型
+// define the type of event
 enum class EventType {
     LOOT_FOUND,      
     ENEMY_ENCOUNTER,   
@@ -13,25 +13,23 @@ enum class EventType {
     NOTHING_FOUND      
 };
 
-// "事件" 的数据结构
+// data structure of event
 struct EventResult {
     EventType type;
-    std::string message; // "你找到了..." / "一只狗跳了出来！"
-
-    // 仅用于 LOOT_FOUND: 找到的物品ID和数量
+    std::string message; // something like "you find... a dog jumps out"
+    // used in loot-find, the found item
     std::map<std::string, int> loot; 
 
-    // 仅用于 ENEMY_ENCOUNTER: 遭遇的敌人ID (交给战斗系统处理)
+    // used in ENEMY_ENCOUNTER: id of encountered enemy -> then proceed to combat system
     std::string enemyId;
 
-    // 仅用于 SPECIAL_DISCOVERY: 需要的道具ID
+    // used in SPECIAL_DISCOVERY: some special items
     std::string requiredItem; // e.g., "lockpick"
 };
 
-// 静态工厂类
 class EventFactory {
 public:
-    // 输入一个地点，输出一个随机事件
+    // input: location, output: event
     static EventResult generateEvent(const Location& location);
 };
 #endif

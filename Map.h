@@ -4,39 +4,38 @@
 #include <vector>
 #include <map>
 
-struct Location { //每个地点
-    std::string id;         // 内部ID, e.g., "city_ruins"
-    std::string name;       // 显示名称, "废弃的市区"
-    int dangerLevel;        // 危险等级 (1-5)
+struct Location { // define location
+    std::string id;         // inner ID, e.g., "city_ruins"
+    std::string name;       // name, "ruined city"
+    int dangerLevel;        // danger level (1-5)
 
-    std::map<std::string, double> lootTable; //掉落东西的概率
+    std::map<std::string, double> lootTable; // probability of dropping item
 
-    double enemyChance;         // 遭遇敌人的概率
-    double specialEventChance;  // 特殊发现的概率
-    double emptyChance;         // 空手而归的概率
+    double enemyChance;       
+    double specialEventChance;  
+    double emptyChance;         
 };
 
 class Map {
 private:
-    // 1. 这是一个"原型"列表，存储所有可能的地点模板
+    // store location template
     std::vector<Location> locationPrototypes;
 
-    // 2. 这是当天实际生成的地点
+    // actually generated location on that day
     std::vector<Location> dailyLocations;
     
-    // 3. 追踪当天哪些地点已经被"搜刮过"
-    // "走到已经探索过的节点不消耗体力/时间" -> 我们简化为"搜刮过的地点不能再搜"
+    // track already explored location, and you can't explore the same location two times
     std::vector<bool> locationCompleted;
 
-    void initializePrototypes(); // 用于加载地点模板
+    void initializePrototypes(); // load location template
 
 public:
-    Map(); // 构造函数，调用 initializePrototypes
+    Map(); // call initializePrototypes
 
-    void generateDailyMap(int currentDay); //刷新地点
+    void generateDailyMap(int currentDay); // refresh location
 
-    std::vector<Location*> getAvailableLocations(); // 获取可供玩家选择的地点列表 (用于显示菜单)
+    std::vector<Location*> getAvailableLocations(); // get the list of location, used in location menu
 
-    void completeLocation(Location* loc); // 标记一个地点今天已经被搜刮过了
+    void completeLocation(Location* loc); // remark a explored location
 };
 #endif

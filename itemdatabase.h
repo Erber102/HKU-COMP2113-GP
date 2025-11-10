@@ -1,7 +1,9 @@
 #ifndef ITEMDATABASE_H
 #define ITEMDATABASE_H
 
-#include "Item.h"
+#include "item.h"
+#include <string>
+using namespace std;
 
 void createItemPrototype(int id, string name, string desc, int cat, int val, int health, int stamina, int dmg, int dur, bool edible);
 void initItemDatabase();

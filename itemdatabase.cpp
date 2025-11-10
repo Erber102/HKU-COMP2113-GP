@@ -1,4 +1,4 @@
-#include "ItemDatabase.h"
+#include "itemdatabase.h"
 #include <cstdlib>
 #include <ctime>
 #include <string>

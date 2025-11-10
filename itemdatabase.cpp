@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <string>
+using namespace std;
 
 Item itemPrototypes[20];  // To store the definition of items
 int itemPrototypeCount = 0;

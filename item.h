@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-
 using namespace std;
 
 // Item category constants
@@ -14,7 +13,7 @@ const int CATEGORY_TOOL = 3;     // Tools
 const int CATEGORY_WEAPON = 4;   // Weapons
 const int CATEGORY_AMMO = 5;     // Ammunition
 
-// Difficulty level constants
+// difficulty level constants
 const int DIFFICULTY_EASY = 0;
 const int DIFFICULTY_NORMAL = 1;
 const int DIFFICULTY_HARD = 2;
@@ -33,7 +32,6 @@ struct Item {
     bool isEdible;
 };
 
-// Function that displays item information
 void showItemInfo(Item item);
 
 #endif

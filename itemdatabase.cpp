@@ -12,7 +12,6 @@ void createItemPrototype(int id, string name, string desc, int cat, int val, int
     if (itemPrototypeCount >= 20){
       return;
     }
-    
     Item newItem;
     newItem.id = id;
     newItem.name = name;

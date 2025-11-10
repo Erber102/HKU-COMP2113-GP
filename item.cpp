@@ -1,4 +1,6 @@
 #include "Item.h"
+#include <iostream>
+using namespace std;
 
 // display item information
 void showItemInfo(Item item) {

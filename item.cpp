@@ -1,6 +1,6 @@
 #include "Item.h"
 
-// Display item information
+// display item information
 void showItemInfo(Item item) {
     cout << "=== " << item.name << " ===" << endl;
     cout << "Description: " << item.description << endl;

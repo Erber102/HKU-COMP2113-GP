@@ -8,125 +8,36 @@ using namespace std;
 
 string SaveSystem::saveFileName = SAVE_FILE_NAME;
 
-void SaveSystem::serializeInventory(ofstream& file, vector<Item*>& inventory) {
-    // 统计相同物品的数量
-    vector<pair<string, int>> itemCounts;
-    for (Item* item : inventory) {
-        bool found = false;
-        for (auto& pair : itemCounts) {
-            if (pair.first == item->name) {
-                pair.second++;
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            itemCounts.push_back({item->name, 1});
-        }
-    }
-    
-    // 写入物品统计数量
-    int uniqueItemCount = itemCounts.size();
-    file.write(reinterpret_cast<const char*>(&uniqueItemCount), sizeof(uniqueItemCount));
-    
-    // 写入每个物品的名称和数量
-    for (auto& pair : itemCounts) {
-        // 写入物品名称长度和名称
-        int nameLength = pair.first.length();
-        file.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
-        file.write(pair.first.c_str(), nameLength);
-        
-        // 写入物品数量
-        file.write(reinterpret_cast<const char*>(&pair.second), sizeof(pair.second));
-    }
+void SaveSystem::serializeMarketTrends(ofstream& file, MarketTrends& trends) {
+    file.write(reinterpret_cast<const char*>(&trends.food_demand), sizeof(trends.food_demand));
+    file.write(reinterpret_cast<const char*>(&trends.water_demand), sizeof(trends.water_demand));
+    file.write(reinterpret_cast<const char*>(&trends.medicine_demand), sizeof(trends.medicine_demand));
+    file.write(reinterpret_cast<const char*>(&trends.metal_demand), sizeof(trends.metal_demand));
+    file.write(reinterpret_cast<const char*>(&trends.currentDifficulty), sizeof(trends.currentDifficulty));
 }
 
-bool SaveSystem::deserializeInventory(ifstream& file, Player& player) {
-    // 读取唯一物品数量
-    int uniqueItemCount;
-    file.read(reinterpret_cast<char*>(&uniqueItemCount), sizeof(uniqueItemCount));
+bool SaveSystem::deserializeMarketTrends(ifstream& file, MarketTrends& trends) {
+    file.read(reinterpret_cast<char*>(&trends.food_demand), sizeof(trends.food_demand));
+    file.read(reinterpret_cast<char*>(&trends.water_demand), sizeof(trends.water_demand));
+    file.read(reinterpret_cast<char*>(&trends.medicine_demand), sizeof(trends.medicine_demand));
+    file.read(reinterpret_cast<char*>(&trends.metal_demand), sizeof(trends.metal_demand));
+    file.read(reinterpret_cast<char*>(&trends.currentDifficulty), sizeof(trends.currentDifficulty));
     
-    if (file.fail() || uniqueItemCount < 0 || uniqueItemCount > 1000) {
-        return false; // 数据损坏
-    }
-    
-    // 重新创建物品栏
-    for (int i = 0; i < uniqueItemCount; i++) {
-        // 读取物品名称长度
-        int nameLength;
-        file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
-        
-        if (file.fail() || nameLength <= 0 || nameLength > 100) {
-            return false; // 数据损坏
-        }
-        
-        // 读取物品名称
-        string itemName;
-        itemName.resize(nameLength);
-        file.read(&itemName[0], nameLength);
-        
-        if (file.fail()) {
-            return false;
-        }
-        
-        // 读取物品数量
-        int quantity;
-        file.read(reinterpret_cast<char*>(&quantity), sizeof(quantity));
-        
-        if (file.fail() || quantity <= 0 || quantity > 100) {
-            return false; // 数据损坏
-        }
-        
-        // 使用ItemDatabase重新创建物品
-        for (int j = 0; j < quantity; j++) {
-            Item* newItem = createItem(itemName);
-            if (newItem != nullptr) {
-                player.addItem(newItem);
-            } else {
-                cerr << "Warning: Item '" << itemName << "' not found in database!" << endl;
-                // 继续加载其他物品，不中断
-            }
-        }
+    // 验证数据合理性
+    if (file.fail() || 
+        trends.food_demand < 0.1f || trends.food_demand > 100.0f ||
+        trends.currentDifficulty < DIFFICULTY_EASY || trends.currentDifficulty > DIFFICULTY_HARD) {
+        return false;
     }
     
     return true;
 }
 
-void SaveSystem::serializePlayer(ofstream& file, Player& player) {
-    // 保存玩家基础状态
-    file.write(reinterpret_cast<const char*>(&player.hp), sizeof(player.hp));
-    file.write(reinterpret_cast<const char*>(&player.stamina), sizeof(player.stamina));
-    file.write(reinterpret_cast<const char*>(&player.money), sizeof(player.money));
-    
-    // 保存物品栏
-    serializeInventory(file, player.getInventory());
+void SaveSystem::updateMarketTrends(MarketTrends& trends) {
+    trends.updateTrends();
 }
 
-bool SaveSystem::deserializePlayer(ifstream& file, Player& player) {
-    // 清空玩家当前状态
-    player.clearInventory();
-    
-    // 读取玩家基础状态
-    file.read(reinterpret_cast<char*>(&player.hp), sizeof(player.hp));
-    file.read(reinterpret_cast<char*>(&player.stamina), sizeof(player.stamina));
-    file.read(reinterpret_cast<char*>(&player.money), sizeof(player.money));
-    
-    if (file.fail()) {
-        return false;
-    }
-    
-    // 验证数据合理性
-    if (player.hp < 0 || player.hp > 1000 || 
-        player.stamina < 0 || player.stamina > 1000 || 
-        player.money < 0 || player.money > 1000000) {
-        return false;
-    }
-    
-    // 读取物品栏
-    return deserializeInventory(file, player);
-}
-
-void SaveSystem::saveGame(Player& player, void* market, int day) {
+void SaveSystem::saveGame(Player& player, MarketTrends& trends, int day) {
     ofstream file(saveFileName, ios::binary);
     
     if (!file.is_open()) {
@@ -149,8 +60,8 @@ void SaveSystem::saveGame(Player& player, void* market, int day) {
         // 保存玩家数据
         serializePlayer(file, player);
         
-        // Market数据暂时留空，等Market模块完成后可以扩展
-        // 这里可以预留位置给market数据
+        // 保存MarketTrends数据
+        serializeMarketTrends(file, trends);
         
         file.close();
         cout << "Game saved successfully! Day " << day << endl;
@@ -160,12 +71,11 @@ void SaveSystem::saveGame(Player& player, void* market, int day) {
         if (file.is_open()) {
             file.close();
         }
-        // 删除损坏的存档文件
         deleteSave();
     }
 }
 
-bool SaveSystem::loadGame(Player& player, void* market, int& day) {
+bool SaveSystem::loadGame(Player& player, MarketTrends& trends, int& day) {
     ifstream file(saveFileName, ios::binary);
     
     if (!file.is_open()) {
@@ -207,9 +117,11 @@ bool SaveSystem::loadGame(Player& player, void* market, int& day) {
             return false;
         }
         
-        // 检查文件是否读取完整
-        if (file.peek() != EOF) {
-            cerr << "Warning: Extra data in save file!" << endl;
+        // 加载MarketTrends数据
+        if (!deserializeMarketTrends(file, trends)) {
+            cerr << "Error: Corrupted market data!" << endl;
+            file.close();
+            return false;
         }
         
         file.close();
@@ -222,20 +134,5 @@ bool SaveSystem::loadGame(Player& player, void* market, int& day) {
             file.close();
         }
         return false;
-    }
-}
-
-bool SaveSystem::saveExists() {
-    ifstream file(saveFileName);
-    bool exists = file.good();
-    file.close();
-    return exists;
-}
-
-void SaveSystem::deleteSave() {
-    if (remove(saveFileName.c_str()) == 0) {
-        cout << "Save file deleted." << endl;
-    } else {
-        cerr << "Error deleting save file!" << endl;
     }
 }

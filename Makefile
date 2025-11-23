@@ -1,18 +1,23 @@
 # compiler setting
 CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++11 -I. -IMay_system -INight_market_Joey
+CXXFLAGS := -Wall -Wextra -std=c++11 -I. -IMap_system -INight_market_Joey -ICombat_system
 TARGET := game
 
 # list all source files
 SOURCES := main.cpp \
            Game.cpp \
            Player.cpp \
-           combat.cpp \
-           monster.cpp \
+           item.cpp \
+           itemdatabase.cpp \
+           SaveSystem.cpp \
+           Combat_system/combat.cpp \
            panel.cpp \
-           May_system/DayPhase.cpp \
-           May_system/Event.cpp \
-           May_system/Map.cpp
+           Map_system/DayPhase.cpp \
+           Map_system/Event.cpp \
+           Map_system/Map.cpp \
+           Night_market_Joey/Customer.cpp \
+           Night_market_Joey/Market.cpp \
+           Night_market_Joey/NightPhase.cpp
 
 # object list
 OBJECTS := $(addprefix build/,$(SOURCES:.cpp=.o))

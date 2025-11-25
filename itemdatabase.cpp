@@ -251,6 +251,50 @@ int getShopItemCount() {
     return count;
 }
 
+// Gets the most expensive item from the database
+Item* getMostExpensiveItem() {
+    if (itemPrototypeCount == 0) {
+        cout << "Error: No items in database!" << endl;
+        return NULL;
+    }
+    
+    int maxIndex = 0;
+    int maxValue = itemPrototypes[0].value;
+    
+    for (int i = 1; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].value > maxValue) {
+            maxValue = itemPrototypes[i].value;
+            maxIndex = i;
+        }
+    }
+    
+    Item* expensiveItem = new Item;
+    *expensiveItem = itemPrototypes[maxIndex];
+    return expensiveItem;
+}
+
+// Gets the cheapest item from the database
+Item* getCheapestItem() {
+    if (itemPrototypeCount == 0) {
+        cout << "Error: No items in database!" << endl;
+        return NULL;
+    }
+    
+    int minIndex = 0;
+    int minValue = itemPrototypes[0].value;
+    
+    for (int i = 1; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].value < minValue) {
+            minValue = itemPrototypes[i].value;
+            minIndex = i;
+        }
+    }
+    
+    Item* cheapItem = new Item;
+    *cheapItem = itemPrototypes[minIndex];
+    return cheapItem;
+}
+
 // Finds item by ID
 Item* findItemById(int id) {
     if (id < 0) {

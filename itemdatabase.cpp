@@ -218,3 +218,89 @@ void deleteItem(Item* item) {
         delete item;
     }
 }
+// Get shop item by index
+Item* getShopItem(int index) {
+    if (index < 0 || index >= getShopItemCount()) {
+        cout << "Error: Invalid shop item index!" << endl;
+        return NULL;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].category != CATEGORY_SCRAP) {
+            if (count == index) {
+                Item* newItem = new Item;
+                *newItem = itemPrototypes[i];
+                return newItem;
+            }
+            count++;
+        }
+    }
+    
+    return NULL;
+}
+
+// Get shop item count
+int getShopItemCount() {
+    int count = 0;
+    for (int i = 0; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].category != CATEGORY_SCRAP) {
+            count++;
+        }
+    }
+    return count;
+}
+
+// Finds item by ID
+Item* findItemById(int id) {
+    if (id < 0) {
+        cout << "Error: Invalid item ID!" << endl;
+        return NULL;
+    }
+    
+    for (int i = 0; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].id == id) {
+            Item* foundItem = new Item;
+            *foundItem = itemPrototypes[i];
+            return foundItem;
+        }
+    }
+    
+    cout << "Error: Item with ID " << id << " not found!" << endl;
+    return NULL;
+}
+
+// Gets total number of item prototypes
+int getTotalItemPrototypes() {
+    return itemPrototypeCount;
+}
+
+// Validates item data
+bool isValidItem(Item* item) {
+    if (item == NULL) {
+        cout << "Error: Item pointer is NULL!" << endl;
+        return false;
+    }
+    
+    if (item->id < 0) {
+        cout << "Error: Item ID cannot be negative!" << endl;
+        return false;
+    }
+    
+    if (item->name.empty()) {
+        cout << "Error: Item name cannot be empty!" << endl;
+        return false;
+    }
+    
+    if (item->value < 0) {
+        cout << "Error: Item value cannot be negative!" << endl;
+        return false;
+    }
+    
+    if (item->category < CATEGORY_SCRAP || item->category > CATEGORY_AMMO) {
+        cout << "Error: Invalid item category!" << endl;
+        return false;
+    }
+    
+    return true;
+}

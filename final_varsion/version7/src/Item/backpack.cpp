@@ -1,8 +1,9 @@
-// backpack.cpp
+
 #include "backpack.h"
 #include <iostream>
 
 bool Backpack::addItem(const Item& item) {
+    
     if (isFull()) {
         cout << "Backpack is full, cannot add item!" << endl;
         return false;
@@ -26,12 +27,15 @@ Item Backpack::getItem(int index) const {
 }
 
 void Backpack::displayItems() const {
+    // If there are no items stored in the internal container (e.g. std::vector<Item> items), print a message and exit early
     if (items.empty()) {
         cout << "Backpack is empty" << endl;
         return;
     }
-
+    
+    // Print a header so the player knows they are looking at the backpack UI
     cout << "=== Backpack Items ===" << endl;
+    // For each item, it prints the item's name and description
     for (size_t i = 0; i < items.size(); i++) {
         cout << i + 1 << ". " << items[i].name << " - " << items[i].description << endl;
     }

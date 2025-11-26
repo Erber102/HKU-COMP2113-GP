@@ -14,6 +14,7 @@ private:
     void rest();
     void showNoteInputMenu();
     void applyNoteEffect(Note note,Character &target);
+    Backpack backpack;
 public:
     CombatPlayer(const string &name);
     void increaseHarmony();
@@ -26,6 +27,9 @@ public:
     void takeTurn(Character &target);
     void resetTurn();
     bool activateRune(Character &target);
+    void initBackpack();
+    void showBackpackAndUseItem(Character &target);
+    Backpack& getBackpack() { return backpack; }
 };
 
 #endif

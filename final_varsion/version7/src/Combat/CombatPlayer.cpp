@@ -37,6 +37,8 @@ void CombatPlayer::setAmmoCallback(std::function<bool()> func){
     consumeAmmoCallback = func;
 }
 
+// Sets the callback function for opening backpack during combat
+// This enables backpack functionality integration into the combat phase
 void CombatPlayer::setBackpackCallback(std::function<void()> func){
     openBackpackCallback = func;
 }
@@ -142,7 +144,7 @@ void CombatPlayer::showNoteInputMenu(){
     cout<<" [5] SOL - "<<YELLOW<<"Purge"<<RESET<<endl;
     cout<<" [6] LA  - "<<MAGENTA<<"Variation"<<RESET<<endl;
     cout<<" [7] SI  - "<<WHITE<<"Extra turns"<<RESET<<endl;
-    cout<<" [B] Open backpack (switch weapon)"<<endl;
+    cout<<" [B] Open backpack (switch weapon)"<<endl; // Display backpack option and allows accessing inventory during combat
     cout<<endl;
 }
 bool CombatPlayer::handleInput(char key,Character &target){
@@ -179,6 +181,7 @@ bool CombatPlayer::handleInput(char key,Character &target){
             break;
         case 'b':
         case 'B':
+            // Player can press 'B' to open backpack and switch weapons
             if(openBackpackCallback){
                 openBackpackCallback();
             } else {

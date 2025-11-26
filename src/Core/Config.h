@@ -17,14 +17,14 @@ namespace EasyConfig {
 namespace NormalConfig {
     const int STARTING_HP = 100;
     const int STARTING_STAMINA = 50;
-    const int STARTING_MONEY = 0;
+    const int STARTING_MONEY = 30;
     const float DEMAND_GROWTH_RATE = 1.05;
 }
 
 namespace HardConfig {
     const int STARTING_HP = 80;
     const int STARTING_STAMINA = 30;
-    const int STARTING_MONEY = -20;
+    const int STARTING_MONEY = 0;
     const float DEMAND_GROWTH_RATE = 1.08;
 }
 

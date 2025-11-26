@@ -1,7 +1,7 @@
 #ifndef BACKPACK_H
 #define BACKPACK_H
 
-#include "Item.h"
+#include "item.h"
 
 // 背包结构体
 struct Backpack {

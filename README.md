@@ -14,12 +14,7 @@ Tian Congxi
 
 Zhang Wenyi
 
-## How to play
-
-Combat system:
-
-Use the number keys 1-7 to play notes. Different notes have different effects. Certain combinations of notes can form runes that have much more powerful effects!
-
+---
 ## Features implemented
 
 - **Random Events:** (Event system) Trigger random events during exploration including finding resources, encountering enemies, special discoveries to make each playthrough unpredictable.
@@ -29,10 +24,25 @@ Use the number keys 1-7 to play notes. Different notes have different effects. C
 - **Multiple Files:** Modular design with separate header and implementation files for each system (Game, Player, Item, Combat, Market, etc.).
 - **Multiple Difficulty Levels:** Three difficulty modes (**Easy**, **Normal**, **Hard**) affecting starting resources, survival costs, and combat difficulty.
 
+---
+
+## How to play
+
+1. **Start the Game:**
+   - Launch the game and choose your difficulty level (**Easy**, **Normal**, or **Hard**).
+   - The game starts at Day 1, with each day divided into day and night phases.
+
+2. **Control of Combat System:**
+
+Use the number keys 1-7 to play notes. Different notes have different effects. Certain combinations of notes can form runes that have much more powerful effects!
+
+---
 
 ## Description
 
 In this game, you will be a magic bard who tries to survive in the end times. All you have is a flute that can play beautiful music and a backpack. During the day phase, you can explore and scavenge. During the night phase, you can trade and transact.
+
+---
 
 ## For developer
 
@@ -51,6 +61,14 @@ combat->fightEnemy(enemyIndex);
 ```
 
 to start a fight with enemy (currently 0~3).
+
+---
+
+## **Compilation and Execution**
+
+### **Environment**
+
+### **Steps to Compile**
 
 ---
 

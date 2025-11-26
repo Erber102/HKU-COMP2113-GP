@@ -1,5 +1,4 @@
 #include "itemdatabase.h"
-#include "../Core/Config.h"
 #include <cstdlib>
 #include <ctime>
 #include <string>
@@ -218,4 +217,134 @@ void deleteItem(Item* item) {
     if (item != NULL) {
         delete item;
     }
+}
+// Get shop item by index
+Item* getShopItem(int index) {
+    if (index < 0 || index >= getShopItemCount()) {
+        cout << "Error: Invalid shop item index!" << endl;
+        return NULL;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].category != CATEGORY_SCRAP) {
+            if (count == index) {
+                Item* newItem = new Item;
+                *newItem = itemPrototypes[i];
+                return newItem;
+            }
+            count++;
+        }
+    }
+    
+    return NULL;
+}
+
+// Get shop item count
+int getShopItemCount() {
+    int count = 0;
+    for (int i = 0; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].category != CATEGORY_SCRAP) {
+            count++;
+        }
+    }
+    return count;
+}
+
+// Gets the most expensive item from the database
+Item* getMostExpensiveItem() {
+    if (itemPrototypeCount == 0) {
+        cout << "Error: No items in database!" << endl;
+        return NULL;
+    }
+    
+    int maxIndex = 0;
+    int maxValue = itemPrototypes[0].value;
+    
+    for (int i = 1; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].value > maxValue) {
+            maxValue = itemPrototypes[i].value;
+            maxIndex = i;
+        }
+    }
+    
+    Item* expensiveItem = new Item;
+    *expensiveItem = itemPrototypes[maxIndex];
+    return expensiveItem;
+}
+
+// Gets the cheapest item from the database
+Item* getCheapestItem() {
+    if (itemPrototypeCount == 0) {
+        cout << "Error: No items in database!" << endl;
+        return NULL;
+    }
+    
+    int minIndex = 0;
+    int minValue = itemPrototypes[0].value;
+    
+    for (int i = 1; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].value < minValue) {
+            minValue = itemPrototypes[i].value;
+            minIndex = i;
+        }
+    }
+    
+    Item* cheapItem = new Item;
+    *cheapItem = itemPrototypes[minIndex];
+    return cheapItem;
+}
+
+// Finds item by ID
+Item* findItemById(int id) {
+    if (id < 0) {
+        cout << "Error: Invalid item ID!" << endl;
+        return NULL;
+    }
+    
+    for (int i = 0; i < itemPrototypeCount; i++) {
+        if (itemPrototypes[i].id == id) {
+            Item* foundItem = new Item;
+            *foundItem = itemPrototypes[i];
+            return foundItem;
+        }
+    }
+    
+    cout << "Error: Item with ID " << id << " not found!" << endl;
+    return NULL;
+}
+
+// Gets total number of item prototypes
+int getTotalItemPrototypes() {
+    return itemPrototypeCount;
+}
+
+// Validates item data
+bool isValidItem(Item* item) {
+    if (item == NULL) {
+        cout << "Error: Item pointer is NULL!" << endl;
+        return false;
+    }
+    
+    if (item->id < 0) {
+        cout << "Error: Item ID cannot be negative!" << endl;
+        return false;
+    }
+    
+    if (item->name.empty()) {
+        cout << "Error: Item name cannot be empty!" << endl;
+        return false;
+    }
+    
+    if (item->value < 0) {
+        cout << "Error: Item value cannot be negative!" << endl;
+        return false;
+    }
+    
+    if (item->category < CATEGORY_SCRAP || item->category > CATEGORY_AMMO) {
+        cout << "Error: Invalid item category!" << endl;
+        return false;
+    }
+    
+    return true;
 }

@@ -44,6 +44,10 @@ Zhang Wenyi
 
 3. **Run the game**
    ```bash
+   make run
+   ```
+   or
+   ```bash
    ./bin/game
    ```
 

@@ -1,7 +1,7 @@
 #include<string>
 #include<vector>
 #include<iostream>
-#include<termio.h>
+#include<termios.h>
 #include<unistd.h>
 //use ANSI to draw the UI
 class textGame {

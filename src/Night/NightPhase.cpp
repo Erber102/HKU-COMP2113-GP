@@ -1,15 +1,16 @@
 #include "NightPhase.h"
 #include "Customer.h"
 #include "Market.h"
-#include "Config.h"
-#include "item.h"
-#include "itemdatabase.h"
-#include "../Player.h"
+#include "../Core/Config.h"
+#include "../Item/item.h"
+#include "../Item/itemdatabase.h"
+#include "../Player/Player.h"
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
 #include <iomanip>
+#include <limits>
 
 // Constructor
 NightPhase::NightPhase(Player* player, Market* market) 
@@ -50,20 +51,36 @@ void NightPhase::executeNightPhase(int day) {
     std::vector<Customer> customers = generateCustomers(trends);
     
     bool nightPhaseActive = true;
-    
+    int invalidInputCount = 0;
+    const int MAX_INVALID_INPUTS = 5;
+
     while (nightPhaseActive) {
         displayMenu();
-        
+
         int choice;
         std::cout << "\nPlease choose: ";
-        std::cin >> choice;
-        
+
+        // Input validation
+        if (!(std::cin >> choice)) {
+            std::cin.clear(); // Clear error state
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore bad input
+            std::cout << "Invalid input! Please enter a number." << std::endl;
+            invalidInputCount++;
+
+            if (invalidInputCount >= MAX_INVALID_INPUTS) {
+                std::cout << "Too many invalid inputs. Ending night phase." << std::endl;
+                break;
+            }
+            continue;
+        }
+
         switch (choice) {
             case 1:
                 // View customers
                 displayCustomers(customers);
+                invalidInputCount = 0; // Reset invalid input count
                 break;
-                
+
             case 2:
                 // Trade with customer
                 if (customers.empty()) {
@@ -74,27 +91,33 @@ void NightPhase::executeNightPhase(int day) {
                         std::cout << "[" << (i + 1) << "] " << customers[i].name << std::endl;
                     }
                     std::cout << "[0] Return" << std::endl;
-                    
+
                     int customerChoice;
                     std::cout << "Choice: ";
-                    std::cin >> customerChoice;
-                    
-                    if (customerChoice > 0 && customerChoice <= static_cast<int>(customers.size())) {
+
+                    if (!(std::cin >> customerChoice)) {
+                        std::cin.clear();
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        std::cout << "Invalid input!" << std::endl;
+                    } else if (customerChoice > 0 && customerChoice <= static_cast<int>(customers.size())) {
                         handleCustomerTrade(customers[customerChoice - 1]);
                     }
                 }
+                invalidInputCount = 0;
                 break;
-                
+
             case 3:
                 // Black market
                 handleBlackMarket();
+                invalidInputCount = 0;
                 break;
-                
+
             case 4:
                 // View inventory
                 m_player->displayInventory();
+                invalidInputCount = 0;
                 break;
-                
+
             case 5:
                 // End night phase
                 if (processEndOfNight(day)) {
@@ -104,9 +127,15 @@ void NightPhase::executeNightPhase(int day) {
                     return;
                 }
                 break;
-                
+
             default:
                 std::cout << "Invalid choice" << std::endl;
+                invalidInputCount++;
+
+                if (invalidInputCount >= MAX_INVALID_INPUTS) {
+                    std::cout << "Too many invalid inputs. Ending night phase." << std::endl;
+                    nightPhaseActive = false;
+                }
                 break;
         }
     }

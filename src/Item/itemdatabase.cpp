@@ -1,4 +1,5 @@
 #include "itemdatabase.h"
+#include "../Core/Config.h"
 #include <cstdlib>
 #include <ctime>
 #include <string>

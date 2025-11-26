@@ -1,23 +1,29 @@
 # compiler setting
 CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++11 -I. -IMap_system -INight_market_Joey -ICombat_system
-TARGET := game
+CXXFLAGS := -Wall -Wextra -std=c++11 -Isrc/Core -Isrc/Player -Isrc/Map -Isrc/Combat -Isrc/Night -Isrc/Item -Isrc/Save
+TARGET := bin/game
 
 # list all source files
-SOURCES := main.cpp \
-           Game.cpp \
-           Player.cpp \
-           item.cpp \
-           itemdatabase.cpp \
-           SaveSystem.cpp \
-           Combat_system/combat.cpp \
-           panel.cpp \
-           Map_system/DayPhase.cpp \
-           Map_system/Event.cpp \
-           Map_system/Map.cpp \
-           Night_market_Joey/Customer.cpp \
-           Night_market_Joey/Market.cpp \
-           Night_market_Joey/NightPhase.cpp
+SOURCES := src/Core/main.cpp \
+           src/Core/Game.cpp \
+           src/Player/Player.cpp \
+           src/Core/InputSystem.cpp \
+           src/Core/UISystem.cpp \
+           src/Item/item.cpp \
+           src/Item/itemdatabase.cpp \
+           src/Save/SaveSystem.cpp \
+           src/Core/panel.cpp \
+           src/Map/DayPhase.cpp \
+           src/Map/Event.cpp \
+           src/Map/Map.cpp \
+           src/Night/Customer.cpp \
+           src/Night/Market.cpp \
+           src/Night/NightPhase.cpp \
+           src/Combat/CombatPlayer.cpp \
+           src/Combat/combat.cpp \
+           src/Combat/enemy.cpp \
+           src/Combat/character.cpp \
+           src/Combat/utils.cpp
 
 # object list
 OBJECTS := $(addprefix build/,$(SOURCES:.cpp=.o))

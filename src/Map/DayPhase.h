@@ -4,7 +4,6 @@
 class Player;
 class Map;
 class ItemDatabase;
-class CombatSystem;
 
 #include "Event.h"
 
@@ -13,13 +12,12 @@ private:
     Player* m_player;
     Map* m_map;
     ItemDatabase* m_itemDB;
-    CombatSystem* m_combat;
 
     // Inner function
 
     // Location Menu, Player can choose a location
     Location* selectLocationMenu();
-    
+
     // From a specific location explore nearby location
     void exploreLocation(Location* location);
 
@@ -27,9 +25,9 @@ private:
     void handleEventResult(const EventResult& result);
 
 public:
-    DayPhase(Player* player, Map* map, ItemDatabase* itemDB, CombatSystem* combat);
+    DayPhase(Player* player, Map* map, ItemDatabase* itemDB);
 
     // core function, execute the daytime process
-    void executeDay(); 
+    void executeDay();
 };
 #endif

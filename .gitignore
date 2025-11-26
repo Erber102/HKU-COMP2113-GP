@@ -1,5 +1,6 @@
 # compile & output
 build/
+bin/
 *.o
 *.a
 *.so

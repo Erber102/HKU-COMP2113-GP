@@ -1,7 +1,9 @@
 #include "enemy.h"
-#include "player.h"
+#include "CombatPlayer.h"
+#include "../Core/InputSystem.h"
 #include "utils.h"
 #include<iostream>
+#include<memory>
 #include<cstdlib>
 #include<ctime>
 using namespace std;
@@ -9,21 +11,21 @@ using namespace std;
 Enemy::Enemy(const string &name,const string &enemyType,int health):Character(name,health),type(enemyType),turnCounter(0){
     if(type=="Rhythm Breaker"){
         description={"Piercing noise emitting!","Your rhythm is disrupted!","Playing dissonant notes!"};
-        addRune(make_unique<Rune>("Noise rune",vector<Note>{SI,RE,SI},"Cause damage and reduce resonance",15,RED));
+        addRune(std::unique_ptr<Rune>(new Rune("Noise rune",vector<Note>{SI,RE,SI},"Cause damage and reduce resonance",15,RED)));
     }
     else if(type=="Melody Thief"){
         description={"Your melody stolen!","Imitating your playing!","Disturbing the music!"};
-        addRune(make_unique<Rune>("Theft rune",vector<Note>{FA,SOL,FA},"Theft resonance",10,MAGENTA));
+        addRune(std::unique_ptr<Rune>(new Rune("Theft rune",vector<Note>{FA,SOL,FA},"Theft resonance",10,MAGENTA)));
     }
     else if (type=="Harmony Monster"){
         description={"Producing defening harmony!","Low frequencies vibrating!","Creating discordant chords"};
-        addRune(make_unique<Rune>("Shock rune",vector<Note>{DO,SI,DO},"Cause a great amount of damage",30,RED));
+        addRune(std::unique_ptr<Rune>(new Rune("Shock rune",vector<Note>{DO,SI,DO},"Cause a great amount of damage",30,RED)));
     }
 }
 // Enemy's action in one turn
 void Enemy::takeTurn(Character &target){
-    Terminal::clearScreen();
-    Terminal::drawTitle(name+"'s turn");
+    InputSystem::clearScreen();
+    InputSystem::drawTitle(name+"'s turn");
     cout<<BOLD<<"Enemy: "<<name<<RESET<<endl;
     cout<<"Health: "<<getHealthBar()<<endl<<endl;
     //Enemy's behavior
@@ -32,7 +34,7 @@ void Enemy::takeTurn(Character &target){
     else normalAttack(target);
     turnCounter++;
     changeResonance(5);
-    Utils::waitForAnyKey();
+    InputSystem::waitForAnyKey();
 }
 void Enemy::useRuneAttack(Character &target){
     if(runes.empty())return ;
@@ -42,12 +44,12 @@ void Enemy::useRuneAttack(Character &target){
     cout<<BOLD<<rune->color<<name<<" used "<<rune->name<<"!"<<RESET<<endl;
     if(rune->name=="Noise rune"){
         target.takeDamage(rune->power);
-        static_cast<Player&>(target).changeResonance(-10);
+        static_cast<CombatPlayer&>(target).changeResonance(-10);
         cout<<RED<<"You took "<<rune->power<<" points of damage, and resonance is reduced!"<<RESET<<endl;
     }
     else if(rune->name=="Theft rune"){
-        int stolen=min(15,static_cast<Player&>(target).getResonance());
-        static_cast<Player&>(target).changeResonance(-stolen);
+        int stolen=min(15,static_cast<CombatPlayer&>(target).getResonance());
+        static_cast<CombatPlayer&>(target).changeResonance(-stolen);
         changeResonance(stolen);
         cout<<MAGENTA<<name<<" stole "<<stolen<<" points of resonance!"<<RESET<<endl;
     }
@@ -59,15 +61,15 @@ void Enemy::useRuneAttack(Character &target){
 void Enemy::disruptPlayer(Character &target){
     cout<<YELLOW<<getRandomDescription()<<RESET<<endl;
     if(rand()%100<50){
-        static_cast<Player&>(target).clearMelody();
+        static_cast<CombatPlayer&>(target).clearMelody();
         cout<<RED<<"Your melody was cleared!"<<RESET<<endl;
     }
     if(rand()%100<30){
-        static_cast<Player&>(target).changeResonance(-8);
+        static_cast<CombatPlayer&>(target).changeResonance(-8);
         cout<<RED<<"Your resonance reduced!"<<RESET<<endl;
     }
     if(rand()%100<20){
-        static_cast<Player&>(target).resetCombo();
+        static_cast<CombatPlayer&>(target).resetCombo();
         cout<<RED<<"Your combo has been reset!"<<RESET<<endl;
     }
 }

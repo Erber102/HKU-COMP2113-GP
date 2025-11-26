@@ -1,9 +1,9 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef COMBATPLAYER_H
+#define COMBATPLAYER_H
 
 #include "character.h"
 
-class Player:public Character{
+class CombatPlayer:public Character{
 private:
     int harmony;
     int combo;
@@ -15,7 +15,7 @@ private:
     void showNoteInputMenu();
     void applyNoteEffect(Note note,Character &target);
 public:
-    Player(const string &name);
+    CombatPlayer(const string &name);
     void increaseHarmony();
     void increaseCombo();
     void resetCombo();

@@ -1,13 +1,13 @@
 #include "Customer.h"
 #include "Market.h"  // Include here for MarketTrends definition
-#include "Config.h"
-#include "item.h"
+#include "../Core/Config.h"
+#include "../Item/item.h"
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
 #include <iostream>
 
-// 客户生成相关常量（如果Config.h中没有定义，使用这些默认值）
+// Customer generation related constants (use these defaults if not defined in Config.h)
 #ifndef MIN_CUSTOMERS
 #define MIN_CUSTOMERS 1
 #endif

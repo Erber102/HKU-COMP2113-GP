@@ -111,15 +111,20 @@ void Combat::openWeaponMenu(){
         InputSystem::waitForAnyKey();
         return;
     }
+    // Get player's inventory and filter for weapons only
     vector<Item*>& inv = playerRef->getInventory();
     vector<Item*> weapons;
     for(Item* item : inv){
+        // Filter items by category to show only weapons in weapon menu
         if(item && item->category == CATEGORY_WEAPON){
             weapons.push_back(item);
         }
     }
+    // Display backpack title to show player is accessing inventory
     InputSystem::clearScreen();
     InputSystem::drawTitle("Backpack - Weapons");
+    
+    // Handle case when backpack has no weapons
     if(weapons.empty()){
         cout<<YELLOW<<"No weapons available. Using bare hands."<<RESET<<endl;
         setCurrentWeapon(nullptr);
@@ -130,6 +135,8 @@ void Combat::openWeaponMenu(){
     while(selecting){
         InputSystem::clearScreen();
         InputSystem::drawTitle("Select Weapon");
+        
+        // Display all weapons from backpack with their properties: name, damage, durability
         for(size_t i=0;i<weapons.size();++i){
             Item* item = weapons[i];
             bool needsAmmo = (item->name == "Shotgun");
@@ -140,6 +147,8 @@ void Combat::openWeaponMenu(){
         }
         cout<<"[0] Cancel"<<endl;
         cout<<YELLOW<<"Press number to equip weapon."<<RESET<<endl;
+        
+        // Handle player input for weapon selection
         bool gotInput=false;
         while(!gotInput){
             if(InputSystem::kbhit()){
@@ -152,7 +161,7 @@ void Combat::openWeaponMenu(){
                 if(key>='1' && key<='9'){
                     int option = key-'0';
                     if(option>=1 && option <= static_cast<int>(weapons.size())){
-                        Item* chosen = weapons[option-1];
+                        Item* chosen = weapons[option-1];      // Equip the chosen weapon from backpack
                         setCurrentWeapon(chosen);
                         cout<<GREEN<<"Equipped "<<currentWeapon.name<<" (+"
                             <<currentWeapon.damage<<" dmg";

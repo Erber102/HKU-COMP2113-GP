@@ -14,7 +14,7 @@ CombatPlayer::CombatPlayer(const string &name):Character(name,100),harmony(5),co
     addNoteEffect(DO,std::unique_ptr<NoteEffect>(new NoteEffect("Heal","Recover small amount of health",8,GREEN)));
     addNoteEffect(RE,std::unique_ptr<NoteEffect>(new NoteEffect("Power up","Recover resonance",10,BLUE)));
     addNoteEffect(MI,std::unique_ptr<NoteEffect>(new NoteEffect("Attack","Damage the enemy",12,RED)));
-    addNoteEffect(FA,std::unique_ptr<NoteEffect>(new NoteEffect("Shield","aquire temper defense",5,CYAN)));
+    addNoteEffect(FA,std::unique_ptr<NoteEffect>(new NoteEffect("Shield","Aquire temper defense",5,CYAN)));
     addNoteEffect(SOL,std::unique_ptr<NoteEffect>(new NoteEffect("Purge","Rurge and recover small amount of health",5,MAGENTA)));
     addNoteEffect(LA,std::unique_ptr<NoteEffect>(new NoteEffect("Variation","Random effect",0,WHITE)));
     addNoteEffect(SI,std::unique_ptr<NoteEffect>(new NoteEffect("Accumulation","Extra turns",0,WHITE)));
@@ -61,6 +61,7 @@ bool CombatPlayer::activateRune(Character &target){
                 return 1;
             }
             else {
+                InputSystem::waitForAnyKey();
                 break;
             }
         }
@@ -98,7 +99,8 @@ void CombatPlayer::takeTurn(Character &target){
     
             // cout<<"!!"<<getResonance()<<endl;
     //display player health
-    cout<<endl<<"Health:    "<<getHealthBar();
+    cout<<endl<<"Your health:    "<<getHealthBar()<<endl;
+    cout<<"Enemy's health: "<<target.getHealthBar()<<endl<<endl;
     cout<<endl;
     //display resonance
     cout<<"Resonance: "<<getResonanceBar();
@@ -189,7 +191,16 @@ void CombatPlayer::handleInput(char key,Character &target){
         //check if there are activated rune
         activateRune(target);
     }
-    if(key!=' ')InputSystem::waitForAnyKey();
+    else {
+        while(1){
+            if(InputSystem::kbhit()){
+                char key=InputSystem::getch();
+                handleInput(key,target);
+                break;
+            }
+            InputSystem::sleepMs(100);
+        }
+    }
 }
 //applying the specific note effect
 void CombatPlayer::applyNoteEffect(Note note,Character &target){
@@ -229,8 +240,8 @@ void CombatPlayer::applyNoteEffect(Note note,Character &target){
             applyNoteEffect(randomNote,target);
             break;}
         case SI:
-            {if(resonance>=10){
-                    changeResonance(-10);
+            {if(resonance>=30){
+                    changeResonance(-30);
                     extraTurns+=2;
                     cout<<WHITE<<"Aquire extra turns"<<RESET<<endl;
                 }
@@ -243,6 +254,7 @@ void CombatPlayer::applyNoteEffect(Note note,Character &target){
         default:
             break;
     }
+    InputSystem::sleepMs(2000);
 }
 void CombatPlayer::applyRuneEffect(const Rune &rune,Character &target){
     int effectPower=rune.power+(harmony*2)+(combo/2);

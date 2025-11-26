@@ -1,5 +1,5 @@
 # Doomsday Scavenger
-![Doomsday Scavenger](./img2.png)
+![Doomsday Scavenger](./img2.jpg)
 ## Description
 
 In this game, you will be a magic bard who tries to survive in the end times. All you have is a flute that can play beautiful music and a backpack. During the day phase, you can explore and scavenge. During the night phase, you can trade and transact.

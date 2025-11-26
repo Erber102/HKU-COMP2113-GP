@@ -100,6 +100,36 @@ void Game::startNewGame() {
     currentDay = 1;
     currentState = DAY;
 
+    vector<string> difficultyOptions = {
+        "Easy - More resources, lower demand growth",
+        "Normal - Balanced experience",
+        "Hard - Scarce resources, higher demand"
+    };
+    int difficultyChoice = UISystem::getMenuChoice("SELECT DIFFICULTY", difficultyOptions);
+    int difficulty = DIFFICULTY_NORMAL;
+
+    switch (difficultyChoice) {
+        case 1:
+            difficulty = DIFFICULTY_EASY;
+            player.hp = EasyConfig::STARTING_HP;
+            player.stamina = EasyConfig::STARTING_STAMINA;
+            player.money = EasyConfig::STARTING_MONEY;
+            break;
+        case 2:
+            difficulty = DIFFICULTY_NORMAL;
+            player.hp = NormalConfig::STARTING_HP;
+            player.stamina = NormalConfig::STARTING_STAMINA;
+            player.money = NormalConfig::STARTING_MONEY;
+            break;
+        case 3:
+            difficulty = DIFFICULTY_HARD;
+            player.hp = HardConfig::STARTING_HP;
+            player.stamina = HardConfig::STARTING_STAMINA;
+            player.money = HardConfig::STARTING_MONEY;
+            break;
+    }
+    setGameDifficulty(difficulty);
+
     UISystem::startSection("NEW GAME START");
 
     UISystem::showInfo("Welcome to the Wasteland Survival Game!");

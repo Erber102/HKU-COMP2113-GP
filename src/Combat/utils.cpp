@@ -1,6 +1,6 @@
 #include "utils.h"
 #include<iostream>
-#include<termio.h>
+#include<termios.h>
 #include<unistd.h>
 #include<fcntl.h>
 #include<sys/ioctl.h>

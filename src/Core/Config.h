@@ -32,7 +32,7 @@ namespace HardConfig {
 }
 
 // 存档相关配置
-const char* SAVE_FILE_NAME = "savegame.dat";
+extern const char* SAVE_FILE_NAME;
 
 // 游戏平衡常数
 const int BASE_STAMINA_RESTORE = 30;

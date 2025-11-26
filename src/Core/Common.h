@@ -6,11 +6,12 @@
 #include <vector>
 using namespace std;
 
-enum GameState { 
-    MAIN_MENU, 
-    DAY, 
-    NIGHT, 
-    GAME_OVER 
+enum GameState {
+    MAIN_MENU,
+    DAY,
+    NIGHT,
+    COMBAT,
+    GAME_OVER
 };
 
 enum ItemType { 

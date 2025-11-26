@@ -1,8 +1,8 @@
 #include "Market.h"
-#include "Config.h"
-#include "itemdatabase.h"
-#include "item.h"
-#include "../Player.h"
+#include "../Core/Config.h"
+#include "../Item/itemdatabase.h"
+#include "../Item/item.h"
+#include "../Player/Player.h"
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>

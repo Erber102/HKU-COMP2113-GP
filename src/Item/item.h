@@ -13,10 +13,7 @@ const int CATEGORY_TOOL = 3;     // Tools
 const int CATEGORY_WEAPON = 4;   // Weapons
 const int CATEGORY_AMMO = 5;     // Ammunition
 
-// difficulty level constants
-const int DIFFICULTY_EASY = 0;
-const int DIFFICULTY_NORMAL = 1;
-const int DIFFICULTY_HARD = 2;
+// difficulty level constants - defined in Config.h
 
 // Item structure
 struct Item{

@@ -1,7 +1,7 @@
 #ifndef COMBAT_H
 #define COMBAT_H
 
-#include "player.h"
+#include "CombatPlayer.h"
 #include "enemy.h"
 #include<vector>
 #include<memory>
@@ -9,7 +9,7 @@
 //The class for combat actions;
 class Combat{
 private:
-    unique_ptr<Player> player;
+    unique_ptr<CombatPlayer> player;
     vector<unique_ptr<Enemy>> enemies;
     int currentEnemyIndex;
     int score;

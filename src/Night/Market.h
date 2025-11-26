@@ -18,11 +18,11 @@ class Player;
  * Demand grows over time, affecting customer purchase quantities
  */
 struct MarketTrends {
-    float food_demand;        // Demand for food items (初始为 1.0)
-    float water_demand;       // Demand for water items (初始为 1.0)
-    float medicine_demand;    // Demand for medicine items (初始为 1.0)
-    float metal_demand;       // Demand for metal/scrap items (初始为 1.0)
-    float tool_demand;        // Demand for tools (初始为 1.0)
+    float food_demand;        // Demand for food items (initial 1.0)
+    float water_demand;       // Demand for water items (initial 1.0)
+    float medicine_demand;    // Demand for medicine items (initial 1.0)
+    float metal_demand;       // Demand for metal/scrap items (initial 1.0)
+    float tool_demand;        // Demand for tools (initial 1.0)
     
     // Constructor - initialize all demands to 1.0
     MarketTrends();

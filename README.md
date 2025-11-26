@@ -1,5 +1,10 @@
 # HKU-COMP2113-GP
 
+## Description
+
+In this game, you will be a magic bard who tries to survive in the end times. All you have is a flute that can play beautiful music and a backpack. During the day phase, you can explore and scavenge. During the night phase, you can trade and transact.
+
+---
 ## Team members
 
 Lang Ruifan
@@ -38,12 +43,6 @@ Use the number keys 1-7 to play notes. Different notes have different effects. C
 
 ---
 
-## Description
-
-In this game, you will be a magic bard who tries to survive in the end times. All you have is a flute that can play beautiful music and a backpack. During the day phase, you can explore and scavenge. During the night phase, you can trade and transact.
-
----
-
 ## For developer
 
 For the combat system, include `"combat.h"` and `"utils.h"`,
@@ -67,8 +66,13 @@ to start a fight with enemy (currently 0~3).
 ## **Compilation and Execution**
 
 ### **Environment**
+- **Operating System:** Linux/Unix systems
+- **Compiler:** Any C++ compiler that supports C++11 or higher (e.g., `g++`)
+- **Dependencies:** None (fully implemented with standard C++ libraries)
 
 ### **Steps to Compile**
+
+
 
 ---
 

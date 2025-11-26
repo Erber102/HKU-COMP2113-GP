@@ -13,21 +13,21 @@ namespace EasyConfig {
     const int STARTING_HP = 120;
     const int STARTING_STAMINA = 70;
     const int STARTING_MONEY = 50;
-    const double DEMAND_GROWTH_RATE = 1.03;
+    const float DEMAND_GROWTH_RATE = 1.03;
 }
 
 namespace NormalConfig {
     const int STARTING_HP = 100;
     const int STARTING_STAMINA = 50;
     const int STARTING_MONEY = 0;
-    const double DEMAND_GROWTH_RATE = 1.05;
+    const float DEMAND_GROWTH_RATE = 1.05;
 }
 
 namespace HardConfig {
     const int STARTING_HP = 80;
     const int STARTING_STAMINA = 30;
     const int STARTING_MONEY = -20; // 初始负债
-    const double DEMAND_GROWTH_RATE = 1.08;
+    const float DEMAND_GROWTH_RATE = 1.08;
 }
 
 // 存档相关配置

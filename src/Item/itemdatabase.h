@@ -13,4 +13,11 @@ int getGameDifficulty();
 Item* getRandomScrapWithDifficulty(int difficulty);
 void deleteItem(Item* item);
 
+Item* getShopItem(int index);
+int getShopItemCount();
+Item* getMostExpensiveItem();
+Item* getCheapestItem();
+bool isValidItem(Item* item);
+Item* findItemById(int id)
+
 #endif

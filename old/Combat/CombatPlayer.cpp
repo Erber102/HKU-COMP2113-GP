@@ -3,6 +3,7 @@
 #include "utils.h"
 #include<iostream>
 #include<memory>
+#include "backpack.h"
 #include<algorithm>
 using namespace std;
 
@@ -17,6 +18,10 @@ CombatPlayer::CombatPlayer(const string &name):Character(name,100),harmony(5),co
     addNoteEffect(SOL,std::unique_ptr<NoteEffect>(new NoteEffect("Purge","Rurge and recover small amount of health",5,MAGENTA)));
     addNoteEffect(LA,std::unique_ptr<NoteEffect>(new NoteEffect("Variation","Random effect",0,WHITE)));
     addNoteEffect(SI,std::unique_ptr<NoteEffect>(new NoteEffect("Accumulation","Extra turns",0,WHITE)));
+    initBackpack();
+}
+void CombatPlayer::initBackpack() {
+    initBackpack(backpack, "战斗背包", 10);
 }
 
 void CombatPlayer::increaseHarmony(){
@@ -66,6 +71,31 @@ bool CombatPlayer::activateRune(Character &target){
 void CombatPlayer::takeTurn(Character &target){
     InputSystem::clearScreen();
     InputSystem::drawTitle("Your Turn");
+    
+    // 检查生命值，如果过低提示使用道具
+    if (getHealth() < 30) {
+        cout << RED << "警告：生命值过低！" << RESET << endl;
+        
+        // 检查背包中是否有恢复道具
+        bool hasRecoveryItem = false;
+        for (int i = 0; i < backpack.itemCount; i++) {
+            if (backpack.items[i]->isEdible && backpack.items[i]->healthEffect > 0) {
+                hasRecoveryItem = true;
+                break;
+            }
+        }
+        
+        if (hasRecoveryItem) {
+            cout << YELLOW << "背包中有恢复道具，按 [8] 查看并使用" << RESET << endl;
+        }
+        cout << endl;
+    }
+    
+    //display player health
+    cout<<endl<<"Health:    "<<getHealthBar();
+    cout<<endl;
+
+    
             // cout<<"!!"<<getResonance()<<endl;
     //display player health
     cout<<endl<<"Health:    "<<getHealthBar();
@@ -104,6 +134,7 @@ void CombatPlayer::showNoteInputMenu(){
     cout<<" [5] SOL - "<<YELLOW<<"Purge"<<RESET<<endl;
     cout<<" [6] LA  - "<<MAGENTA<<"Variation"<<RESET<<endl;
     cout<<" [7] SI  - "<<WHITE<<"Extra turns"<<RESET<<endl;
+    cout<<" [8] B   - "<<WHITE<<"Check backpack"<<RESET<<endl;
     cout<<endl;
 }
 void CombatPlayer::handleInput(char key,Character &target){
@@ -137,6 +168,12 @@ void CombatPlayer::handleInput(char key,Character &target){
         case '7':
             addNoteToMelody(SI);
             applyNoteEffect(SI,target);
+            break;
+        case '8':  // 新增背包查看
+        case 'b':
+        case 'B':
+            showBackpackAndUseItem(target);
+            notePlayed = 0;
             break;
         default:
             cout<<RED<<"Invalid input! Please use 1-8 to play note"<<RESET<<endl;
@@ -241,4 +278,81 @@ void CombatPlayer::activeRune(int runeIndex,Character &target){
 }
 void CombatPlayer::resetTurn(){
     defense=0;
+}
+
+void CombatPlayer::showBackpackAndUseItem(Character &target) {
+    InputSystem::clearScreen();
+    InputSystem::drawTitle("背包物品");
+    
+    if (backpack.itemCount == 0) {
+        cout << RED << "背包为空！" << RESET << endl;
+        InputSystem::waitForAnyKey();
+        return;
+    }
+    
+    // 显示背包内容
+    displayBackpackItems(backpack);
+    
+    // 检查是否有可食用道具
+    bool hasEdible = false;
+    for (int i = 0; i < backpack.itemCount; i++) {
+        if (backpack.items[i]->isEdible) {
+            hasEdible = true;
+            break;
+        }
+    }
+    
+    if (!hasEdible) {
+        cout << YELLOW << "背包中没有可食用道具" << RESET << endl;
+        InputSystem::waitForAnyKey();
+        return;
+    }
+    
+    // 让玩家选择使用道具
+    cout << YELLOW << "输入道具编号使用（输入0取消）: " << RESET;
+    
+    while (true) {
+        if (InputSystem::kbhit()) {
+            char choice = InputSystem::getch();
+            
+            if (choice == '0') {
+                cout << "取消使用道具" << endl;
+                break;
+            }
+            
+            int itemIndex = choice - '1';  // 转换为索引（1-based转0-based）
+            if (itemIndex >= 0 && itemIndex < backpack.itemCount) {
+                Item* selectedItem = getItemFromBackpack(backpack, itemIndex);
+                if (selectedItem && selectedItem->isEdible) {
+                    // 使用道具
+                    useItemFromBackpack(backpack, itemIndex);
+                    cout << GREEN << "使用了 " << selectedItem->name << RESET << endl;
+                    
+                    // 应用治疗效果
+                    int healAmount = selectedItem->healthEffect;
+                    heal(healAmount);
+                    cout << GREEN << "恢复了 " << healAmount << " 点生命值" << RESET << endl;
+                    
+                    // 如果还有体力效果
+                    if (selectedItem->staminaEffect > 0) {
+                        // 恢复共鸣值
+                        changeResonance(selectedItem->staminaEffect);
+                        cout << BLUE << "恢复了 " << selectedItem->staminaEffect << " 点共鸣" << RESET << endl;
+                    }
+                    
+                    // 使用道具后结束当前回合
+                    cout << YELLOW << "使用道具结束当前回合" << RESET << endl;
+                    InputSystem::waitForAnyKey();
+                    return;
+                } else {
+                    cout << RED << "该道具无法使用！" << RESET << endl;
+                }
+            } else {
+                cout << RED << "无效的选择！" << RESET << endl;
+            }
+        }
+        InputSystem::sleepMs(100);
+    }
+    
+    InputSystem::waitForAnyKey();
 }

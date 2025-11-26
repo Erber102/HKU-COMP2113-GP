@@ -4,15 +4,15 @@
 
 #include "../Core/Common.h"
 #include "../Combat/CombatPlayer.h"
+#include "../Item/item.h"
 #include <vector>
 #include <string>
 #include <memory>
-using namespace std;
 
 class Player {
 private:
-    vector<Item*> inventory;
-    unique_ptr<CombatPlayer> combatPlayer;
+    std::vector<std::unique_ptr<Item>> inventory;
+    std::unique_ptr<CombatPlayer> combatPlayer;
 
 public:
     int hp = 100;
@@ -20,10 +20,10 @@ public:
     int money = 0; // Initial value
 
     // Item management
-    void addItem(Item* item);
-    bool removeItem(string& itemName, int quantity = 1);
-    bool hasItem(const string& itemName);
-    int getItemCount(string& itemName);
+    void addItem(std::unique_ptr<Item> item);
+    bool removeItem(std::string& itemName, int quantity = 1);
+    bool hasItem(const std::string& itemName);
+    int getItemCount(std::string& itemName);
     void displayInventory();
 
     // Status management
@@ -33,13 +33,13 @@ public:
     void consumeStamina(int amount);
 
     // Get item list
-    vector<Item*>& getInventory() { return inventory; }
+    const std::vector<std::unique_ptr<Item>>& getInventory() const { return inventory; }
 
     // Clear inventory (for game reset)
     void clearInventory();
 
     // Combat system methods - delegated to CombatPlayer
-    void initializeCombatPlayer(const string& name);
+    void initializeCombatPlayer(const std::string& name);
     CombatPlayer* getCombatPlayer() { return combatPlayer.get(); }
     void increaseHarmony();
     void increaseCombo();

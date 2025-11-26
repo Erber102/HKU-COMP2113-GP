@@ -7,34 +7,33 @@
 
 using namespace std;
 
-void Player::addItem(Item* item) {
+void Player::addItem(std::unique_ptr<Item> item) {
     if (item != nullptr) {
-        inventory.push_back(item);
+        inventory.push_back(std::move(item));
     }
 }
 
 bool Player::removeItem(string& itemName, int quantity) {
     if (quantity <= 0) return false;
-    
+
     int removedCount = 0;
     auto it = inventory.begin();
-    
+
     while (it != inventory.end() && removedCount < quantity) {
         if ((*it)->name == itemName) {
-            // Delete dynamically allocated memory
-            delete *it;
+            // No explicit delete needed - unique_ptr handles it automatically
             it = inventory.erase(it);
             removedCount++;
         } else {
             ++it;
         }
     }
-    
+
     return removedCount > 0;
 }
 
 bool Player::hasItem(const string& itemName) {
-    for (Item* item : inventory) {
+    for (const auto& item : inventory) {
         if (item->name == itemName) {
             return true;
         }
@@ -44,7 +43,7 @@ bool Player::hasItem(const string& itemName) {
 
 int Player::getItemCount(string& itemName) {
     int count = 0;
-    for (Item* item : inventory) {
+    for (const auto& item : inventory) {
         if (item->name == itemName) {
             count++;
         }
@@ -64,7 +63,7 @@ void Player::displayInventory() {
 
     // Count quantities of same items
     vector<pair<string, int>> itemCounts;
-    for (Item* item : inventory) {
+    for (const auto& item : inventory) {
         bool found = false;
         for (auto& pair : itemCounts) {
             if (pair.first == item->name) {
@@ -105,10 +104,7 @@ void Player::consumeStamina(int amount) {
 }
 
 void Player::clearInventory() {
-    // Clean up all dynamically allocated items
-    for (Item* item : inventory) {
-        delete item;
-    }
+    // No explicit delete needed - unique_ptr handles it automatically
     inventory.clear();
 }
 

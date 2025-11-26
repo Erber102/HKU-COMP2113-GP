@@ -2,22 +2,21 @@
 #define ITEMDATABASE_H
 
 #include "item.h"
+#include <memory>
 #include <string>
-using namespace std;
 
-void createItemPrototype(int id, string name, string desc, int cat, int val, int health, int stamina, int dmg, int dur, bool edible);
+void createItemPrototype(int id, std::string name, std::string desc, int cat, int val, int health, int stamina, int dmg, int dur, bool edible);
 void initItemDatabase();
 void setGameDifficulty(int difficulty);
-Item* createItem(string itemName);
+std::unique_ptr<Item> createItem(std::string itemName);
 int getGameDifficulty();
-Item* getRandomScrapWithDifficulty(int difficulty);
-void deleteItem(Item* item);
+std::unique_ptr<Item> getRandomScrapWithDifficulty(int difficulty);
 
-Item* getShopItem(int index);
+std::unique_ptr<Item> getShopItem(int index);
 int getShopItemCount();
-Item* getMostExpensiveItem();
-Item* getCheapestItem();
+std::unique_ptr<Item> getMostExpensiveItem();
+std::unique_ptr<Item> getCheapestItem();
 bool isValidItem(Item* item);
-Item* findItemById(int id)
+std::unique_ptr<Item> findItemById(int id);
 
 #endif

@@ -23,17 +23,15 @@ int UISystem::getMenuChoice(const string& title, const vector<string>& options) 
     cout << STATUS_INFO << "Use number keys to select an option" << RESET << endl;
 
     while (true) {
-        if (InputSystem::kbhit()) {
-            char key = InputSystem::getch();
-            int choice = key - '0';
+        char key;
+        cin >> key;
+        int choice = key - '0';
 
-            if (choice >= 1 && choice <= static_cast<int>(options.size())) {
-                return choice;
-            } else {
-                cout << STATUS_WARNING << "Invalid choice! Please select 1-" << options.size() << RESET << endl;
-            }
+        if (choice >= 1 && choice <= static_cast<int>(options.size())) {
+            return choice;
+        } else {
+            cout << STATUS_WARNING << "Invalid choice! Please select 1-" << options.size() << RESET << endl;
         }
-        InputSystem::sleepMs(100);
     }
 }
 

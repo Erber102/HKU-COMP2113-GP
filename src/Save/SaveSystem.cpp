@@ -24,7 +24,7 @@ bool SaveSystem::deserializePlayer(ifstream& file, Player& player) {
     return !file.fail();
 }
 
-void SaveSystem::serializeInventory(ofstream& file, vector<Item*>& inventory) {
+void SaveSystem::serializeInventory(ofstream& file, const std::vector<std::unique_ptr<Item>>& inventory) {
     // 简化版物品栏序列化
     int count = inventory.size();
     file.write(reinterpret_cast<const char*>(&count), sizeof(count));

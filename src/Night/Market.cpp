@@ -160,17 +160,17 @@ bool Market::purchaseFromBlackMarket(Player& player, const std::string& itemName
     }
     
     // Create the item using ItemDatabase
-    Item* newItem = createItem(itemName);
+    std::unique_ptr<Item> newItem = createItem(itemName);
     if (!newItem) {
         std::cout << "Error: Cannot create item" << std::endl;
         return false;
     }
-    
+
     // Deduct money
     player.money -= item->price;
-    
+
     // Add item to inventory
-    player.addItem(newItem);
+    player.addItem(std::move(newItem));
     
     std::cout << "Purchase successful!" << std::endl;
     std::cout << "Obtained: " << item->display_name << std::endl;

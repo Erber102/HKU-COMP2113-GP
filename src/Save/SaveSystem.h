@@ -21,7 +21,7 @@ private:
     static bool deserializePlayer(std::ifstream& file, Player& player);
     
     // 物品序列化
-    static void serializeInventory(std::ofstream& file, std::vector<Item*>& inventory);
+    static void serializeInventory(std::ofstream& file, const std::vector<std::unique_ptr<Item>>& inventory);
     static bool deserializeInventory(std::ifstream& file, Player& player);
     
     // MarketTrends序列化 - 暂时移除

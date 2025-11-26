@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-using namespace std;
 
 // Item category constants
 const int CATEGORY_SCRAP = 0;    // Scrap
@@ -18,8 +17,8 @@ const int CATEGORY_AMMO = 5;     // Ammunition
 // Item structure
 struct Item{
     int id;
-    string name;
-    string description;
+    std::string name;
+    std::string description;
     int category;
     int value;
     int healthEffect;

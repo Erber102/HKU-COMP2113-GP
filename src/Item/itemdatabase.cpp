@@ -1,4 +1,5 @@
 #include "itemdatabase.h"
+#include "../Core/Config.h"
 #include <cstdlib>
 #include <ctime>
 #include <string>
@@ -84,20 +85,20 @@ int getGameDifficulty() {
 
 
 // function that creates item according to the name
-Item* createItem(string itemName) {
+std::unique_ptr<Item> createItem(string itemName) {
     for (int i = 0; i < itemPrototypeCount; i++) {
         if (itemPrototypes[i].name == itemName) {
-            // Use new to create new instance
-            Item* newItem = new Item;
+            // Use unique_ptr with new to create new instance
+            std::unique_ptr<Item> newItem(new Item());
             *newItem = itemPrototypes[i];
             return newItem;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 // function that gives random scrap item according to difficulty
-Item* getRandomScrapWithDifficulty(int difficulty) {
+std::unique_ptr<Item> getRandomScrapWithDifficulty(int difficulty) {
     // Collect all scrap items (including canned food)
     int scrapItems[20];
     int scrapCount = 0;
@@ -110,7 +111,7 @@ Item* getRandomScrapWithDifficulty(int difficulty) {
     }
     
     if (scrapCount == 0) {
-        return NULL;
+        return nullptr;
     }
     
     // categorize scrap by value
@@ -139,105 +140,99 @@ Item* getRandomScrapWithDifficulty(int difficulty) {
     
     // set probability distribution based on difficulty
     int randomValue = rand() % 100;  // Random number 0-99
-    
+
     switch (difficulty) {
         case DIFFICULTY_EASY:
             // Easy: Low 40%, Medium 35%, High 25%
             if (randomValue < 25) {
                 // Only 1 high-value item, so we just use index 0
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[highValueItems[0]];  // Gold Ring
                 return newItem;
-            } 
+            }
             else if (randomValue < 60) {
                 // Only 1 medium-value item, so we just use index 0
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[mediumValueItems[0]];  // Electronic Component
                 return newItem;
-            } 
+            }
             else if (lowCount > 0) {
                 // Multiple low-value items, so we need random selection
                 int selectedIndex = rand() % lowCount;
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[lowValueItems[selectedIndex]];  // Random low-value
                 return newItem;
             }
             break;
-            
+
         case DIFFICULTY_NORMAL:
             // Normal: Low 60%, Medium 30%, High 10%
             if (randomValue < 10) {
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[highValueItems[0]];  // Gold Ring
                 return newItem;
-            } 
+            }
             else if (randomValue < 40) {
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[mediumValueItems[0]];  // Electronic Component
                 return newItem;
-            } 
+            }
             else if (lowCount > 0) {
                 int selectedIndex = rand() % lowCount;
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[lowValueItems[selectedIndex]];  // Random low-value
                 return newItem;
             }
             break;
-            
+
         case DIFFICULTY_HARD:
             // Hard: Low 80%, Medium 15%, High 5%
             if (randomValue < 5) {
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[highValueItems[0]];  // Gold Ring
                 return newItem;
-            } 
+            }
             else if (randomValue < 20) {
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[mediumValueItems[0]];  // Electronic Component
                 return newItem;
-            } 
+            }
             else if (lowCount > 0) {
                 int selectedIndex = rand() % lowCount;
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[lowValueItems[selectedIndex]];  // Random low-value
                 return newItem;
             }
             break;
     }
-    
+
     // If all conditions fail, return random scrap item
     int randomIndex = rand() % scrapCount;
-    Item* newItem = new Item;
+    std::unique_ptr<Item> newItem(new Item());
     *newItem = itemPrototypes[scrapItems[randomIndex]];
     return newItem;
 }
 
-// function to delete memory and prevent memory leak
-void deleteItem(Item* item) {
-    if (item != NULL) {
-        delete item;
-    }
-}
 // Get shop item by index
-Item* getShopItem(int index) {
+std::unique_ptr<Item> getShopItem(int index) {
     if (index < 0 || index >= getShopItemCount()) {
         cout << "Error: Invalid shop item index!" << endl;
-        return NULL;
+        return nullptr;
     }
     
     int count = 0;
     for (int i = 0; i < itemPrototypeCount; i++) {
         if (itemPrototypes[i].category != CATEGORY_SCRAP) {
             if (count == index) {
-                Item* newItem = new Item;
+                std::unique_ptr<Item> newItem(new Item());
                 *newItem = itemPrototypes[i];
                 return newItem;
             }
             count++;
         }
     }
-    
-    return NULL;
+
+    return nullptr;
 }
 
 // Get shop item count
@@ -252,10 +247,10 @@ int getShopItemCount() {
 }
 
 // Gets the most expensive item from the database
-Item* getMostExpensiveItem() {
+std::unique_ptr<Item> getMostExpensiveItem() {
     if (itemPrototypeCount == 0) {
         cout << "Error: No items in database!" << endl;
-        return NULL;
+        return nullptr;
     }
     
     int maxIndex = 0;
@@ -268,16 +263,16 @@ Item* getMostExpensiveItem() {
         }
     }
     
-    Item* expensiveItem = new Item;
+    std::unique_ptr<Item> expensiveItem(new Item());
     *expensiveItem = itemPrototypes[maxIndex];
     return expensiveItem;
 }
 
 // Gets the cheapest item from the database
-Item* getCheapestItem() {
+std::unique_ptr<Item> getCheapestItem() {
     if (itemPrototypeCount == 0) {
         cout << "Error: No items in database!" << endl;
-        return NULL;
+        return nullptr;
     }
     
     int minIndex = 0;
@@ -290,28 +285,28 @@ Item* getCheapestItem() {
         }
     }
     
-    Item* cheapItem = new Item;
+    std::unique_ptr<Item> cheapItem(new Item());
     *cheapItem = itemPrototypes[minIndex];
     return cheapItem;
 }
 
 // Finds item by ID
-Item* findItemById(int id) {
+std::unique_ptr<Item> findItemById(int id) {
     if (id < 0) {
         cout << "Error: Invalid item ID!" << endl;
-        return NULL;
+        return nullptr;
     }
     
     for (int i = 0; i < itemPrototypeCount; i++) {
         if (itemPrototypes[i].id == id) {
-            Item* foundItem = new Item;
+            std::unique_ptr<Item> foundItem(new Item());
             *foundItem = itemPrototypes[i];
             return foundItem;
         }
     }
-    
+
     cout << "Error: Item with ID " << id << " not found!" << endl;
-    return NULL;
+    return nullptr;
 }
 
 // Gets total number of item prototypes

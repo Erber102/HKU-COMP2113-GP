@@ -4,7 +4,6 @@
 
 #include "Common.h"
 #include "Player.h"
-using namespace std;
 
 // 前向声明其他模块
 class DayPhase;

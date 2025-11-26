@@ -12,8 +12,8 @@ struct Location { // define location
     std::map<std::string, double> lootTable; // probability of dropping item
 
     double enemyChance;       
-    double specialEventChance;  
-    double emptyChance;         
+    double specialEventChance;
+    double emptyChance;
 };
 
 class Map {

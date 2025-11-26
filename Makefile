@@ -3,6 +3,8 @@ CXX := g++
 CXXFLAGS := -Wall -Wextra -std=c++11 -Isrc/Core -Isrc/Player -Isrc/Map -Isrc/Combat -Isrc/Night -Isrc/Item -Isrc/Save
 TARGET := bin/game
 
+#create bin
+$(shell mkdir -p bin)
 # list all source files
 SOURCES := src/Core/main.cpp \
            src/Core/Game.cpp \

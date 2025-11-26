@@ -33,7 +33,7 @@ Zhang Wenyi
 
 1. **Clone or download the project**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Erber102/HKU-COMP2113-GP.git
    cd HKU-COMP2113-GP
    ```
 

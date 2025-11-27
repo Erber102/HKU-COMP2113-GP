@@ -110,7 +110,7 @@ The game follows a structured daily cycle:
 ## Part 4: Member Contributions
 
 ### **Lang Ruifan: Item/Backpack System** (mainly in `./src/Item/`)
-- Implemented item data structures and properties
+- Implemented item data structures and properties,set item drop probability
 - Developed backpack content display system for inventory management
 - Created item usage mechanics with health and stamina effects
 - Integrated backpack functionality into combat and exploration phases

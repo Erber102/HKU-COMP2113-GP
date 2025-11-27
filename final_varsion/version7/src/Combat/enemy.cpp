@@ -7,7 +7,7 @@
 #include<cstdlib>
 #include<ctime>
 using namespace std;
-
+//initiate the description and runes enemies
 Enemy::Enemy(const string &name,const string &enemyType,int health):Character(name,health),type(enemyType),turnCounter(0){
     if(type=="Rhythm Breaker"){
         description={"Piercing noise emitting!","Your rhythm is disrupted!","Playing dissonant notes!"};
@@ -22,7 +22,7 @@ Enemy::Enemy(const string &name,const string &enemyType,int health):Character(na
         addRune(std::unique_ptr<Rune>(new Rune("Shock rune",vector<Note>{DO,SI,DO},"Cause a great amount of damage",30,RED)));
     }
 }
-// Enemy's action in one turn
+// Enemy's action in one turn, facing the target
 void Enemy::takeTurn(Character &target){
     InputSystem::clearScreen();
     InputSystem::drawTitle(name+"'s turn");
@@ -36,6 +36,7 @@ void Enemy::takeTurn(Character &target){
     changeResonance(5);
     InputSystem::waitForAnyKey();
 }
+//enemy use rune to attack "target"
 void Enemy::useRuneAttack(Character &target){
     if(runes.empty())return ;
     const auto &rune=runes[0];
@@ -58,6 +59,7 @@ void Enemy::useRuneAttack(Character &target){
         cout<<RED<<"You took "<<rune->power<<" points of damage!"<<RESET<<endl;
     }
 }
+//disrupt player("target"), with possibility of clear melody, change resonance, and reset combo
 void Enemy::disruptPlayer(Character &target){
     cout<<YELLOW<<getRandomDescription()<<RESET<<endl;
     if(rand()%100<50){
@@ -73,14 +75,17 @@ void Enemy::disruptPlayer(Character &target){
         cout<<RED<<"Your combo has been reset!"<<RESET<<endl;
     }
 }
+//normal attack from the enemy to player("target")
 void Enemy::normalAttack(Character &target){
     int damage=10+(rand()%6);
     target.takeDamage(damage);
     cout<<RED<<name<<" caused you "<<damage<<" points of damage"<<RESET<<endl;
 }
+//return a random description
 string Enemy::getRandomDescription(){
     return description[rand()%description.size()];
 }
+//reset the defense after each turn
 void Enemy::resetTurn(){
     defense=0;
 }

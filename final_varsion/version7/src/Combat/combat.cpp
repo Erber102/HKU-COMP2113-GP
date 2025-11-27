@@ -62,11 +62,11 @@ void Combat::fightEnemy(int enemyIndex){
     }
     else showGameOver();
 }
-
+//equip then weapon "weaponPtr"
 void Combat::equipWeapon(Item* weaponPtr){
     setCurrentWeapon(weaponPtr);
 }
-
+//use healing item
 int Combat::useHealingItem(){
     if(!playerRef) return 0;
     vector<Item*>& inv = playerRef->getInventory();
@@ -88,7 +88,7 @@ int Combat::useHealingItem(){
     cout<<CYAN<<"Consumed "<<itemName<<" for healing."<<RESET<<endl;
     return healAmount;
 }
-
+// consume ammo
 bool Combat::consumeAmmoForCurrentWeapon(){
     if(!currentWeapon.needsAmmo) return true;
     if(!playerRef) return false;
@@ -104,7 +104,7 @@ bool Combat::consumeAmmoForCurrentWeapon(){
     InputSystem::waitForAnyKey();
     return false;
 }
-
+// open weapon menu
 void Combat::openWeaponMenu(){
     if(!playerRef){
         cout<<RED<<"Cannot access backpack right now."<<RESET<<endl;
@@ -179,12 +179,12 @@ void Combat::openWeaponMenu(){
         }
     }
 }
-
+// set "weaponPtr" to current weapon
 void Combat::setCurrentWeapon(Item* weaponPtr){
     currentWeapon.itemPtr = weaponPtr;
     applyEquippedWeapon();
 }
-
+//apply the weapon equipped
 void Combat::applyEquippedWeapon(){
     if(currentWeapon.itemPtr){
         currentWeapon.name = currentWeapon.itemPtr->name;
@@ -202,6 +202,7 @@ void Combat::applyEquippedWeapon(){
         player->setWeaponBonus(currentWeapon.damage, currentWeapon.name, currentWeapon.needsAmmo, durability);
     }
 }
+//handle weapon durability
 void Combat::handleWeaponDurability(){
     if(!playerRef) return;
     if(!currentWeapon.itemPtr) return;
@@ -216,7 +217,7 @@ void Combat::handleWeaponDurability(){
         applyEquippedWeapon();
     }
 }
-
+//calculate the reward of the combat given the "enemyIndex"
 int Combat::calculateReward(int enemyIndex) const{
     static const int rewards[] = {15, 30, 45, 70};
     if(enemyIndex < 0) return 0;
@@ -238,7 +239,7 @@ void Combat::showRuneIntro(){
     cout<<RED<<"3-4-3 Attack Rune"<<RESET<<endl;
     cout<<BLUE<<"5-6-5 Defense Rune"<<RESET<<endl;
 }
-//showing the panel for victory and Go
+//showing the panel for victory and game over
 void Combat::showVictory(){
     InputSystem::clearScreen();
     cout<<BOLD<<GREEN;

@@ -5,7 +5,7 @@
 #include<memory>
 #include<algorithm>
 using namespace std;
-
+//initiate combat settings of player, runes, and note effects
 CombatPlayer::CombatPlayer(const string &name)
 :Character(name,100),harmony(5),combo(0),extraTurns(0),
  weaponBonusDamage(0),equippedWeaponName("Bare Hands"),
@@ -46,29 +46,35 @@ void CombatPlayer::setBackpackCallback(std::function<void()> func){
 void CombatPlayer::setWeaponUsageCallback(std::function<void()> func){
     weaponUsageCallback = func;
 }
-
+//increase harmony by 1
 void CombatPlayer::increaseHarmony(){
     harmony=min(10,harmony+1);
 }
+//increase combo by 1
 void CombatPlayer::increaseCombo(){
     combo++;
 }
+//reset the combo to 0
 void CombatPlayer::resetCombo(){
     combo=0;
 }
+//return the value of combo
 int CombatPlayer::getCombo(){
     return combo;
 }
+//reture the value of harmony
 int CombatPlayer::getHarmony(){
     return harmony;
 }
+//check whether the player has extra turns 
 bool CombatPlayer::hasExtraTurns(){
     return extraTurns>0;
 }
+//use the extra turn
 void CombatPlayer::useExtraTurn(){
     if(extraTurns>0)extraTurns--;
 }
-//check if the rune is activated
+//check if any rune is activated, target refers to the enemy the rune is applied on 
 bool CombatPlayer::activateRune(Character &target){
     int activeRuneIndex=checkMelody();
     if(activeRuneIndex==-1)return 0;
@@ -91,9 +97,11 @@ bool CombatPlayer::activateRune(Character &target){
     }
     return 0;
 }
+//flow of player's turn, target represents the enemy
 void CombatPlayer::takeTurn(Character &target){
     bool actionTaken = false;
     while(!actionTaken){
+        //information display
         InputSystem::clearScreen();
         InputSystem::drawTitle("Your Turn");
         cout<<endl<<"Health:    "<<getHealthBar();
@@ -117,6 +125,7 @@ void CombatPlayer::takeTurn(Character &target){
         cout<<getMelodyDisplay()<<endl<<endl;
         showNoteInputMenu();
         if(activateRune(target))return ;
+        //wait for further input
         cout<<YELLOW<<"Please select an operation to continue..."<<RESET<<endl;
         bool inputHandled = false;
         while(!inputHandled){
@@ -133,6 +142,7 @@ void CombatPlayer::takeTurn(Character &target){
         }
     }
 }
+//function for displaying the simplified effects of the notes
 void CombatPlayer::showNoteInputMenu(){
     InputSystem::drawSeparator();
     cout<<BOLD<<"Play note: "<<RESET<<endl;
@@ -147,9 +157,9 @@ void CombatPlayer::showNoteInputMenu(){
     cout<<" [B] Open backpack (switch weapon)"<<endl; // Display backpack option and allows accessing inventory during combat
     cout<<endl;
 }
+//relate the keys to the effect functions
 bool CombatPlayer::handleInput(char key,Character &target){
     bool notePlayed=1;
-    //relate the keys to the effects
     switch(key){
         case '1':
             addNoteToMelody(DO);
@@ -206,7 +216,7 @@ bool CombatPlayer::handleInput(char key,Character &target){
     if(key!='b' && key!='B') InputSystem::waitForAnyKey();
     return false;
 }
-//applying the specific note effect
+//applying the specific note effect. note is the note applied, target refers to the enemy
 void CombatPlayer::applyNoteEffect(Note note,Character &target){
     const NoteEffect *effect=getNoteEffect(note);
     if(!effect)return ;
@@ -269,6 +279,7 @@ void CombatPlayer::applyNoteEffect(Note note,Character &target){
             break;
     }
 }
+//apply the rune effects, rune is the rune applied, target refers to the enemy
 void CombatPlayer::applyRuneEffect(const Rune &rune,Character &target){
     int effectPower=rune.power+(harmony*2)+(combo/2);
     cout<<BOLD<<rune.color<<"\n"<<rune.name<<" activated"<<RESET<<endl;
@@ -305,6 +316,7 @@ void CombatPlayer::activeRune(int runeIndex,Character &target){
         InputSystem::waitForAnyKey();
     }
 }
+//reset the defense after each round
 void CombatPlayer::resetTurn(){
     defense=0;
 }

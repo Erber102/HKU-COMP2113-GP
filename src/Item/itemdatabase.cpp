@@ -9,6 +9,16 @@ int itemPrototypeCount = 0;
 int currentDifficulty = DIFFICULTY_NORMAL;  // current difficulty
 
 // function that creates items' prototype
+// id - Unique identifier for the item
+// name - Display name of the item
+// desc - Description of the item
+// cat - Category enum value (SCRAP, FOOD, MEDICINE, etc.)
+// val - Base monetary value of the item
+// health - Health restoration effect when used
+// stamina - Stamina restoration effect when used
+// dmg - Damage value for weapons
+// dur - Durability for tools and weapons
+// edible - Whether the item can be consumed
 void createItemPrototype(int id, string name, string desc, int cat, int val, int health, int stamina, int dmg, int dur, bool edible) {
     if (itemPrototypeCount >= 20){
       return;
@@ -29,7 +39,7 @@ void createItemPrototype(int id, string name, string desc, int cat, int val, int
     itemPrototypeCount++;
 }
 
-// function that initializes the data base
+// function that initializes the data base and random seed for item generation
 void initItemDatabase() {
     itemPrototypeCount = 0;
     
@@ -72,6 +82,7 @@ void initItemDatabase() {
 }
 
 // function that sets the difficulty without generating error
+// difficulty - Integer representing difficulty level (DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD)
 void setGameDifficulty(int difficulty) {
     if (difficulty >= DIFFICULTY_EASY && difficulty <= DIFFICULTY_HARD) {
         currentDifficulty = difficulty;
@@ -214,12 +225,15 @@ Item* getRandomScrapWithDifficulty(int difficulty) {
 }
 
 // function to delete memory and prevent memory leak
+// item - Pointer to Item object to be deleted
 void deleteItem(Item* item) {
     if (item != NULL) {
         delete item;
     }
 }
 // Get shop item by index
+// index - Position in the shop items list (0-based)
+// return Item* - Pointer to newly created shop Item, or NULL if invalid index
 Item* getShopItem(int index) {
     if (index < 0 || index >= getShopItemCount()) {
         cout << "Error: Invalid shop item index!" << endl;
@@ -241,7 +255,7 @@ Item* getShopItem(int index) {
     return NULL;
 }
 
-// Get shop item count
+// Counts the number of items available in the shop
 int getShopItemCount() {
     int count = 0;
     for (int i = 0; i < itemPrototypeCount; i++) {
@@ -253,6 +267,7 @@ int getShopItemCount() {
 }
 
 // Gets the most expensive item from the database
+// return Item* - Pointer to newly created most expensive Item, or NULL if database empty
 Item* getMostExpensiveItem() {
     if (itemPrototypeCount == 0) {
         cout << "Error: No items in database!" << endl;
@@ -275,6 +290,8 @@ Item* getMostExpensiveItem() {
 }
 
 // Gets the cheapest item from the database
+// Uses dynamic memory allocation with new operator
+// return Item* - Pointer to newly created cheapest Item, or NULL if database empty
 Item* getCheapestItem() {
     if (itemPrototypeCount == 0) {
         cout << "Error: No items in database!" << endl;
@@ -297,6 +314,7 @@ Item* getCheapestItem() {
 }
 
 // Finds item by ID
+// return Item* - Pointer to newly created found Item
 Item* findItemById(int id) {
     if (id < 0) {
         cout << "Error: Invalid item ID!" << endl;
@@ -320,7 +338,9 @@ int getTotalItemPrototypes() {
     return itemPrototypeCount;
 }
 
-// Validates item data
+// Validates item data of an Item object
+// item - Pointer to Item object to validate
+// return bool - True if item is valid, false otherwise with error messages
 bool isValidItem(Item* item) {
     if (item == NULL) {
         cout << "Error: Item pointer is NULL!" << endl;

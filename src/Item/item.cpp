@@ -5,7 +5,6 @@ using namespace std;
 
 // Shows item name, description, value, category, and specific attributes
 // Inputs: item - Item object to display information for
-
 void showItemInfo(Item item) {
     cout << "=== " << item.name << " ===" << endl;
     cout << "Description: " << item.description << endl;

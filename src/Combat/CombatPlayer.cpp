@@ -22,6 +22,12 @@ CombatPlayer::CombatPlayer(const string &name)
     addNoteEffect(SI,std::unique_ptr<NoteEffect>(new NoteEffect("Accumulation","Extra turns",0,WHITE)));
 }
 
+// Configures weapon bonuses and properties for the combat player
+// bonus - Integer damage bonus provided by the weapon
+// weaponName - String name of the equipped weapon
+// needsAmmo - Boolean indicating if weapon requires ammunition
+// durability - Integer representing weapon durability (-1 for infinite)
+// return void - No return value, updates weapon properties
 void CombatPlayer::setWeaponBonus(int bonus, const std::string& weaponName, bool needsAmmo, int durability){
     weaponBonusDamage = bonus;
     weaponNeedsAmmo = needsAmmo;
@@ -29,20 +35,27 @@ void CombatPlayer::setWeaponBonus(int bonus, const std::string& weaponName, bool
     weaponDurability = durability;
 }
 
+// Sets callback function for consuming healing items during combat
+// func - Function pointer for healing item consumption
 void CombatPlayer::setHealingCallback(std::function<int()> func){
     consumeHealingItemFunc = func;
 }
 
+// Sets callback function for ammunition consumption during combat
+// func - Function pointer for ammo consumption check
 void CombatPlayer::setAmmoCallback(std::function<bool()> func){
     consumeAmmoCallback = func;
 }
 
 // Sets the callback function for opening backpack during combat
 // This enables backpack functionality integration into the combat phase
+// func - Function pointer/callback for backpack opening
 void CombatPlayer::setBackpackCallback(std::function<void()> func){
     openBackpackCallback = func;
 }
 
+// Sets callback function for weapon usage tracking
+// func - Function pointer for weapon usage events
 void CombatPlayer::setWeaponUsageCallback(std::function<void()> func){
     weaponUsageCallback = func;
 }
@@ -97,7 +110,9 @@ bool CombatPlayer::activateRune(Character &target){
     }
     return 0;
 }
+
 //flow of player's turn, target represents the enemy
+//target - Reference to enemy Character being fought
 void CombatPlayer::takeTurn(Character &target){
     bool actionTaken = false;
     while(!actionTaken){

@@ -9,10 +9,18 @@
 #include <limits>
 #include <cstdlib>
 
+// Constructor: Initializes DayPhase with player, map, and item database
+// What it does: Sets up the DayPhase object with references to game components
+// Inputs: player - Pointer to Player object, map - Pointer to Map object, itemDB - Pointer to ItemDatabase
+// Outputs: None (constructor)
 DayPhase::DayPhase(Player* player, Map* map, ItemDatabase* itemDB)
     : m_player(player), m_map(map), m_itemDB(itemDB), m_currentDay(1) {}
 
 namespace {
+// Helper function: Translates internal loot names to display names
+// What it does: Converts internal item IDs to user-friendly display names using a mapping table
+// Inputs: raw - Internal item ID string
+// Outputs: string - User-friendly display name
 std::string translateLootName(const std::string& raw) {
     static const std::unordered_map<std::string, std::string> mapping = {
         {"bandage", "Bandage"},
@@ -36,6 +44,10 @@ std::string translateLootName(const std::string& raw) {
 }
 }
 
+// Main day execution loop: Handles the day phase exploration
+// What it does: Manages the day exploration phase, allowing player to select and explore locations
+// Inputs: currentDay - Current day number for tracking progress
+// Outputs: None
 void DayPhase::executeDay(int currentDay) {
     m_currentDay = currentDay;
     UISystem::startSection("DAY PHASE");
@@ -77,6 +89,10 @@ void DayPhase::executeDay(int currentDay) {
     UISystem::endSection();
 }
 
+// Location selection menu: Displays available locations for exploration
+// What it does: Shows a menu of unexplored locations and handles user selection
+// Inputs: None
+// Outputs: Location* - Pointer to selected location, or nullptr if user cancels
 Location* DayPhase::selectLocationMenu() {
     auto availableLocations = m_map->getAvailableLocations();
 
@@ -122,6 +138,10 @@ Location* DayPhase::selectLocationMenu() {
     }
 }
 
+// Location exploration: Handles the exploration of a selected location
+// What it does: Generates and processes events for the selected location, marks it as completed
+// Inputs: location - Pointer to the location to explore
+// Outputs: None
 void DayPhase::exploreLocation(Location* location) {
     std::cout << "\n=== Exploring " << location->name << " ===" << std::endl;
     std::cout << "Danger Level: " << location->dangerLevel << std::endl;
@@ -137,6 +157,10 @@ void DayPhase::exploreLocation(Location* location) {
     m_map->completeLocation(location);
 }
 
+// Event result handler: Processes different types of events and their outcomes
+// What it does: Handles loot collection, enemy encounters, special discoveries, and empty results
+// Inputs: result - EventResult object containing event type and data
+// Outputs: None
 void DayPhase::handleEventResult(const EventResult& result) {
     std::cout << "\n" << result.message << std::endl;
 
@@ -216,6 +240,10 @@ void DayPhase::handleEventResult(const EventResult& result) {
     }
 }
 
+// Save and exit function: Saves game progress and exits the game
+// What it does: Calls the save system to persist player data and current day, then terminates the program
+// Inputs: None
+// Outputs: None (terminates program)
 void DayPhase::performSaveAndExit() const {
     SaveSystem::saveGame(*m_player, m_currentDay);
     std::cout << "Progress saved. Exiting game..." << std::endl;

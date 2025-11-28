@@ -6,6 +6,10 @@
 #include <iterator>
 #include <algorithm>
 
+// Event generator: Creates random events based on location probabilities
+// What it does: Generates random events (loot, enemies, special discoveries) using weighted probabilities
+// Inputs: location - Location object containing event probabilities and loot tables
+// Outputs: EventResult - Object containing event type, message, and associated data
 EventResult EventFactory::generateEvent(const Location& location) {
     std::random_device rd;
     std::mt19937 gen(rd());

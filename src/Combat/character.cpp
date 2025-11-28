@@ -10,24 +10,29 @@ int Character::getMaxHealth()const{return maxHealth;}
 int Character::getResonance()const{return resonance;}
 int Character::getDefense()const{return defense;}
 
-//"damage" refers to the amount of damage taken
+//apply the damge taken
+//damage: the amount of damage taken
 void Character::takeDamage(int damage){
     int realDamage=max(0,damage-defense);
     health=max(0,health-realDamage);
 }
-//"amount" refers to the amount of health been healed
+//recover the health
+//amount:the amount of health been healed
 void Character::heal(int amount){
     health=min(maxHealth,health+amount);
 }
-//"amount" refers to the amount of changed made in resonance
+//change resonance
+//amount: the amount of changed made in resonance
 void Character::changeResonance(int amount){
     resonance=max(0,min(100,resonance+amount));
 }
 //set the amount of defense to "def"
+//def: amount of defense
 void Character::setDefense(int def){
     defense=def;
 }
 //adding the rune for saving
+//rune: the rune applied
 void Character::addRune(unique_ptr<Rune> rune){
     runes.push_back(move(rune));
 }
@@ -35,16 +40,20 @@ void Character::addRune(unique_ptr<Rune> rune){
 const vector<unique_ptr<Rune>>& Character::getRunes()const{
     return runes;
 }
-//connect "note" with its corresponding "effect"
+//match "note" with its corresponding "effect"
+//note: certain note
+//effect: word description of effect
 void Character::addNoteEffect(Note note,unique_ptr<NoteEffect> effect){
     noteEffect[note]=move(effect);
 }
 //find and return the effect of the inputed "note"
+//note: note needed to find
 const NoteEffect* Character::getNoteEffect(Note note)const{
     auto it=noteEffect.find(note);
     return (it!=noteEffect.end())?it->second.get():nullptr;
 }
 //add the "note" to melody for display
+//note: the node added
 void Character::addNoteToMelody(Note note){
     melody.push_back(note);
 }
@@ -100,6 +109,8 @@ string Character::getMelodyDisplay()const{
     return display;
 }
 //display the effects of the "note"
+//note: the note applied
+//target: the target the note is applied on
 void Character::applyNoteEffect(Note note,Character &target){
     const NoteEffect *effect=getNoteEffect(note);
     if(effect){

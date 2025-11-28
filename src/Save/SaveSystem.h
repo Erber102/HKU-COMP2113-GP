@@ -10,36 +10,36 @@
 #include <fstream>
 #include <vector>
 
-// MarketTrends结构体 - 在Market.h中定义
+// MarketTrends struct - defined in Market.h
 
 class SaveSystem {
 private:
-    static std::string saveFileName;
+    static std::string saveFileName;  // Static save file name
 
-    // 内部序列化方法
-    static void serializePlayer(std::ofstream& file, Player& player);
-    static bool deserializePlayer(std::ifstream& file, Player& player);
+    // Internal serialization methods
+    static void serializePlayer(std::ofstream& file, Player& player);     // Serialize player data
+    static bool deserializePlayer(std::ifstream& file, Player& player);  // Deserialize player data
     
-    // 物品序列化
-    static void serializeInventory(std::ofstream& file, std::vector<Item*>& inventory);
-    static bool deserializeInventory(std::ifstream& file, Player& player);
+    // Inventory serialization
+    static void serializeInventory(std::ofstream& file, std::vector<Item*>& inventory);     // Serialize inventory data
+    static bool deserializeInventory(std::ifstream& file, Player& player);                  // Deserialize inventory data
     
-    // MarketTrends序列化 - 暂时移除
+    // MarketTrends serialization - temporarily removed
 
 public:
-    // 保存游戏
+    // Save game state
     static void saveGame(Player& player, int day);
 
-    // 加载游戏
+    // Load game state
     static bool loadGame(Player& player, int& day);
     
-    // 检查存档是否存在
+    // Check if save file exists
     static bool saveExists();
     
-    // 删除存档
+    // Delete save file
     static void deleteSave();
     
-    // 需求增长函数 - 暂时移除
+    // Demand growth function - temporarily removed
 };
 
 #endif

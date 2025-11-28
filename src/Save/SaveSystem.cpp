@@ -3,20 +3,21 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <map>
 
 using namespace std;
 
 string SaveSystem::saveFileName = "savegame.dat";
 
 void SaveSystem::serializePlayer(ofstream& file, Player& player) {
-    // 简化版玩家序列化
+    // Simplified player serialization
     file.write(reinterpret_cast<const char*>(&player.hp), sizeof(player.hp));
     file.write(reinterpret_cast<const char*>(&player.stamina), sizeof(player.stamina));
     file.write(reinterpret_cast<const char*>(&player.money), sizeof(player.money));
 }
 
 bool SaveSystem::deserializePlayer(ifstream& file, Player& player) {
-    // 简化版玩家反序列化
+    // Simplified player deserialization
     file.read(reinterpret_cast<char*>(&player.hp), sizeof(player.hp));
     file.read(reinterpret_cast<char*>(&player.stamina), sizeof(player.stamina));
     file.read(reinterpret_cast<char*>(&player.money), sizeof(player.money));
@@ -25,7 +26,7 @@ bool SaveSystem::deserializePlayer(ifstream& file, Player& player) {
 }
 
 void SaveSystem::serializeInventory(ofstream& file, vector<Item*>& inventory) {
-    // 将背包压缩为：同名物品的数量
+    // Compress inventory: count of items with the same name
     std::map<std::string, int> counts;
     for (Item* item : inventory) {
         if (!item) continue;
@@ -46,7 +47,7 @@ void SaveSystem::serializeInventory(ofstream& file, vector<Item*>& inventory) {
 }
 
 bool SaveSystem::deserializeInventory(ifstream& file, Player& player) {
-    // 清空原有背包，再根据名称和数量重建物品
+    // Clear existing inventory and rebuild items from name and count
     player.clearInventory();
 
     int distinct = 0;
@@ -86,21 +87,21 @@ void SaveSystem::saveGame(Player& player, int day) {
     }
 
     try {
-        // 写入文件头标识
+        // Write file header identifier
         const char* header = "SAVEGAME";
         file.write(header, 8);
 
-        // 写入版本号
+        // Write version number
         int version = 1;
         file.write(reinterpret_cast<const char*>(&version), sizeof(version));
 
-        // 写入天数
+        // Write day count
         file.write(reinterpret_cast<const char*>(&day), sizeof(day));
 
-        // 序列化玩家
+        // Serialize player
         serializePlayer(file, player);
 
-        // 序列化物品栏
+        // Serialize inventory
         serializeInventory(file, player.getInventory());
 
         file.close();
@@ -119,7 +120,7 @@ bool SaveSystem::loadGame(Player& player, int& day) {
     }
 
     try {
-        // 验证文件头
+        // Verify file header
         char header[9];
         file.read(header, 8);
         header[8] = '\0';
@@ -129,20 +130,20 @@ bool SaveSystem::loadGame(Player& player, int& day) {
             return false;
         }
 
-        // 读取版本号
+        // Read version number
         int version;
         file.read(reinterpret_cast<char*>(&version), sizeof(version));
 
-        // 读取天数
+        // Read day count
         file.read(reinterpret_cast<char*>(&day), sizeof(day));
 
-        // 反序列化玩家
+        // Deserialize player
         if (!deserializePlayer(file, player)) {
             cout << "Error loading player data!" << endl;
             return false;
         }
 
-        // 反序列化物品栏
+        // Deserialize inventory
         if (!deserializeInventory(file, player)) {
             cout << "Error loading inventory data!" << endl;
             return false;

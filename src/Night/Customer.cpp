@@ -27,17 +27,38 @@
 #define MAX_PRICE_MULTIPLIER 1.2f
 #endif
 
-// Customer constructor
+/**
+ * Customer constructor
+ * What it does: Initializes a Customer object with the provided name, desired item, quantity, patience, and base price
+ * Inputs:
+ *   - n: Customer's name string
+ *   - item: Name of the item the customer wants to buy
+ *   - qty: Quantity of items desired
+ *   - pat: Patience level (affects price negotiation)
+ *   - price: Base price per item
+ * Outputs: None (constructor initializes member variables)
+ */
 Customer::Customer(const std::string& n, const std::string& item, int qty, int pat, int price)
     : name(n), desired_item(item), desired_quantity(qty), patience(pat), base_price(price) {
 }
 
-// Default constructor
+/**
+ * Default constructor for Customer
+ * What it does: Creates an empty Customer object with all fields initialized to empty strings or zero
+ * Inputs: None
+ * Outputs: None (constructor initializes all member variables to default values)
+ */
 Customer::Customer() 
     : name(""), desired_item(""), desired_quantity(0), patience(0), base_price(0) {
 }
 
-// Get random customer name
+/**
+ * Get random customer name
+ * What it does: Returns a randomly selected customer name from a predefined list of survivor archetypes.
+ *               Initializes random seed on first call if not already initialized.
+ * Inputs: None
+ * Outputs: Returns a string containing a randomly selected customer name from the predefined list
+ */
 std::string getRandomCustomerName() {
     static const std::vector<std::string> customerNames = {
         "Old Hunter", "Anxious Mother", "Wounded Soldier", "Cunning Merchant",
@@ -55,7 +76,13 @@ std::string getRandomCustomerName() {
     return customerNames[index];
 }
 
-// Get random desired item
+/**
+ * Get random desired item
+ * What it does: Returns a randomly selected item name from a predefined list of items that customers might want.
+ *               Initializes random seed on first call if not already initialized.
+ * Inputs: None
+ * Outputs: Returns a string containing a randomly selected item name from the predefined list
+ */
 std::string getRandomDesiredItem() {
     static const std::vector<std::string> desiredItems = {
         "Canned food", "Scrap Metal", "Electronic Component", "Gold Ring",
@@ -72,7 +99,19 @@ std::string getRandomDesiredItem() {
     return desiredItems[index];
 }
 
-// Generate random customers
+/**
+ * Generate random customers
+ * What it does: Creates a vector of randomly generated customers for the night phase.
+ *               Each customer is assigned a random name, desired item, and patience level.
+ *               The desired quantity is calculated using the demand growth system: base quantity
+ *               plus a random factor multiplied by the current market demand for that item type.
+ *               This implements the core innovation where customer demands grow over time.
+ * Inputs:
+ *   - trends: Reference to MarketTrends object containing current demand multipliers for different item categories
+ *   - count: Number of customers to generate. If negative, randomly generates between MIN_CUSTOMERS and MAX_CUSTOMERS
+ * Outputs: Returns a vector of Customer objects, each with randomly assigned attributes and
+ *          demand-influenced quantities
+ */
 std::vector<Customer> generateCustomers(MarketTrends& trends, int count) {
     // Initialize random seed if not already done
     static bool initialized = false;

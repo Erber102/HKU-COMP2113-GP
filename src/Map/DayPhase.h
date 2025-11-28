@@ -12,22 +12,15 @@ private:
     Player* m_player;
     Map* m_map;
     ItemDatabase* m_itemDB;
+    int m_currentDay;
 
-    // Inner function
-
-    // Location Menu, Player can choose a location
     Location* selectLocationMenu();
-
-    // From a specific location explore nearby location
     void exploreLocation(Location* location);
-
-    // process the result of search
     void handleEventResult(const EventResult& result);
+    void performSaveAndExit() const;
 
 public:
     DayPhase(Player* player, Map* map, ItemDatabase* itemDB);
-
-    // core function, execute the daytime process
-    void executeDay();
+    void executeDay(int currentDay);
 };
 #endif

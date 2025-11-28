@@ -144,14 +144,31 @@ void Game::startNewGame() {
 }
 
 bool Game::loadGame() {
-    // Simplified load game
-    UISystem::showWarning("Load game feature - Under development...");
-    return false;
+    UISystem::startSection("LOAD GAME");
+
+    if (!SaveSystem::saveExists()) {
+        UISystem::showWarning("No save file found. Please start a new game first.");
+        UISystem::endSection();
+        return false;
+    }
+
+    int loadedDay = 1;
+    if (!SaveSystem::loadGame(player, loadedDay)) {
+        UISystem::showError("Failed to load save data.");
+        UISystem::endSection();
+        return false;
+    }
+
+    currentDay = loadedDay;
+    UISystem::showSuccess("Game loaded. Current day: " + to_string(currentDay));
+    UISystem::endSection();
+    return true;
 }
 
 void Game::saveGame() {
-    // Simplified save game
-    UISystem::showWarning("Save game feature - Under development...");
+    UISystem::startSection("SAVE GAME");
+    SaveSystem::saveGame(player, currentDay);
+    UISystem::endSection();
 }
 
 void Game::checkGameOver() {
@@ -175,8 +192,7 @@ void Game::startDayPhase() {
         dayPhase = new DayPhase(&player, map, itemDB);
     }
 
-    // Execute the day phase using the full map system
-    dayPhase->executeDay();
+    dayPhase->executeDay(currentDay);
 
     // After day phase, automatically transition to night
     currentState = NIGHT;
@@ -209,9 +225,13 @@ void Game::startCombatPhase() {
         player.initializeCombatPlayer("Player");
     }
 
+    Item* bestWeapon = player.getBestWeapon();
+
     // Create combat instance
     if (!combat) {
-        combat = new Combat("Player");
+        combat = new Combat(&player, "Player", bestWeapon);
+    } else {
+        combat->equipWeapon(bestWeapon);
     }
 
     // Start combat with first enemy

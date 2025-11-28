@@ -1,22 +1,19 @@
 #ifndef BACKPACK_H
 #define BACKPACK_H
 
+#include <vector>
 #include "item.h"
 
-// 背包结构体
-struct Backpack {
-    string name;
-    int capacity;
-    Item* items[50];  // 使用指针数组
-    int itemCount;
-};
+class Backpack {
+private:
+    std::vector<Item> items;   // internal storage of items
 
-// 背包操作函数声明
-void initBackpack(Backpack &backpack, string name, int capacity);
-bool addItemToBackpack(Backpack &backpack, Item* item);
-void removeItemFromBackpack(Backpack &backpack, int index);
-void showBackpackContents(Backpack &backpack);
-int calculateBackpackTotalValue(Backpack &backpack);
-void useItemFromBackpack(Backpack &backpack, int itemIndex);
+public:
+    bool addItem(const Item& item);
+    void removeItem(int index);
+    Item getItem(int index) const;
+    void displayItems() const;
+    bool isFull() const;
+};
 
 #endif

@@ -44,27 +44,28 @@ void initItemDatabase() {
     // High-value scrap (1 item)
     createItemPrototype(3, "Gold Ring", "Shiny gold ring", CATEGORY_SCRAP, 15, 0, 0, 0, 0, false);
     
-    // Canned food (both scrap and food)
+    // Basic food items
     createItemPrototype(4, "Canned food", "Edible canned food", CATEGORY_FOOD, 2, 20, 10, 0, 0, true);
+    createItemPrototype(5, "Water", "Clean drinking water", CATEGORY_FOOD, 2, 10, 20, 0, 0, true);
     
     // === Goods sold in the store ===
     // Food
-    createItemPrototype(5, "Military Rations", "High-quality food", CATEGORY_FOOD, 25, 40, 25, 0, 0, true);
+    createItemPrototype(6, "Military Rations", "High-quality food", CATEGORY_FOOD, 25, 40, 25, 0, 0, true);
     
     // Medical
-    createItemPrototype(6, "Bandage", "Basic medical supplies", CATEGORY_MEDICINE, 5, 15, 0, 0, 0, false);
-    createItemPrototype(7, "First Aid Kit", "Advanced medical supplies", CATEGORY_MEDICINE, 30, 50, 0, 0, 0, false);
+    createItemPrototype(7, "Bandage", "Basic medical supplies", CATEGORY_MEDICINE, 5, 15, 0, 0, 0, false);
+    createItemPrototype(8, "First Aid Kit", "Advanced medical supplies", CATEGORY_MEDICINE, 30, 50, 0, 0, 0, false);
     
     // Tools
-    createItemPrototype(8, "Crowbar", "Open sealed containers", CATEGORY_TOOL, 25, 0, 0, 0, 20, false);
-    createItemPrototype(9, "Lock pick", "Professional lock-picking tool", CATEGORY_TOOL, 45, 0, 0, 0, 15, false);
+    createItemPrototype(9, "Crowbar", "Open sealed containers", CATEGORY_TOOL, 25, 0, 0, 0, 20, false);
+    createItemPrototype(10, "Lock pick", "Professional lock-picking tool", CATEGORY_TOOL, 45, 0, 0, 0, 15, false);
     
     // Weapons
-    createItemPrototype(10, "Baseball Bat", "Reliable melee weapon", CATEGORY_WEAPON, 20, 0, 0, 15, 50, false);
-    createItemPrototype(11, "Shotgun", "Reliable ranged weapon", CATEGORY_WEAPON, 80, 0, 0, 45, 30, false);
+    createItemPrototype(11, "Baseball Bat", "Reliable melee weapon", CATEGORY_WEAPON, 20, 0, 0, 15, 50, false);
+    createItemPrototype(12, "Shotgun", "Reliable ranged weapon", CATEGORY_WEAPON, 80, 0, 0, 45, 30, false);
     
     // Ammunition
-    createItemPrototype(12, "Bullet", "Shotgun ammunition", CATEGORY_AMMO, 2, 0, 0, 0, 0, false);
+    createItemPrototype(13, "Bullet", "Shotgun ammunition", CATEGORY_AMMO, 2, 0, 0, 0, 0, false);
     
     // Initialize seed for rand()
     srand(time(NULL));

@@ -25,17 +25,55 @@ bool SaveSystem::deserializePlayer(ifstream& file, Player& player) {
 }
 
 void SaveSystem::serializeInventory(ofstream& file, vector<Item*>& inventory) {
-    // 简化版物品栏序列化
-    int count = inventory.size();
-    file.write(reinterpret_cast<const char*>(&count), sizeof(count));
-    // 实际实现需要序列化每个物品
+    // 将背包压缩为：同名物品的数量
+    std::map<std::string, int> counts;
+    for (Item* item : inventory) {
+        if (!item) continue;
+        counts[item->name] += 1;
+    }
+
+    int distinct = static_cast<int>(counts.size());
+    file.write(reinterpret_cast<const char*>(&distinct), sizeof(distinct));
+
+    for (const auto& pair : counts) {
+        const std::string& name = pair.first;
+        int count = pair.second;
+        int nameLen = static_cast<int>(name.size());
+        file.write(reinterpret_cast<const char*>(&nameLen), sizeof(nameLen));
+        file.write(name.c_str(), nameLen);
+        file.write(reinterpret_cast<const char*>(&count), sizeof(count));
+    }
 }
 
 bool SaveSystem::deserializeInventory(ifstream& file, Player& player) {
-    // 简化版物品栏反序列化
-    int count;
-    file.read(reinterpret_cast<char*>(&count), sizeof(count));
-    // 实际实现需要反序列化每个物品
+    // 清空原有背包，再根据名称和数量重建物品
+    player.clearInventory();
+
+    int distinct = 0;
+    file.read(reinterpret_cast<char*>(&distinct), sizeof(distinct));
+    if (!file.good() || distinct < 0) return false;
+
+    for (int i = 0; i < distinct; ++i) {
+        int nameLen = 0;
+        file.read(reinterpret_cast<char*>(&nameLen), sizeof(nameLen));
+        if (!file.good() || nameLen <= 0 || nameLen > 256) return false;
+
+        std::string name(nameLen, '\0');
+        file.read(&name[0], nameLen);
+        if (!file.good()) return false;
+
+        int count = 0;
+        file.read(reinterpret_cast<char*>(&count), sizeof(count));
+        if (!file.good() || count < 0) return false;
+
+        for (int j = 0; j < count; ++j) {
+            Item* item = createItem(name);
+            if (item) {
+                player.addItem(item);
+            }
+        }
+    }
+
     return !file.fail();
 }
 

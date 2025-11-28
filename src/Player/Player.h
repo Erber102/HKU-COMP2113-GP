@@ -24,6 +24,8 @@ public:
     bool removeItem(string& itemName, int quantity = 1);
     bool hasItem(const string& itemName);
     int getItemCount(string& itemName);
+    Item* getBestWeapon();
+    bool removeSpecificItem(Item* target);
     void displayInventory();
 
     // Status management

@@ -45,11 +45,11 @@ char Terminal::getch(){
     read(STDIN_FILENO,&c,1);
     return c;
 }
-
+//clear screen
 void Terminal::clearScreen(){
     cout<<"\033[2J\033[1;1H";
 }
-
+//the size of the terminal is saved in "rows" and "cols"
 void Terminal::getTerminalSize(int &rows,int &cols){
     struct winsize w;
     ioctl(STDOUT_FILENO,TIOCGWINSZ, &w);
@@ -58,7 +58,7 @@ void Terminal::getTerminalSize(int &rows,int &cols){
     terminalWidth=cols;
     widthCalculated=1;
 }
-
+//return the terminalWidth
 int Terminal::getTerminalWidth(){
     if(!widthCalculated){
         int rows,cols;
@@ -76,7 +76,7 @@ void Terminal::drawSeparator(int length){
     for(int i=0;i<length;i++)cout<<"─";
     cout<<RESET<<endl;
 }
-
+//draw "title" suiting the size of the terminal
 void Terminal::drawTitle(string title){
     int width=getTerminalWidth();
     int padding=(width-title.length()-4)/2;
@@ -98,7 +98,7 @@ string Utils::noteToString(Note note){
         default:return "?";
     }
 }
-
+//wait for nonblocking input
 void Utils::waitForAnyKey(){
     cout<<YELLOW<<"Press any key to continue"<<RESET<<endl;
     while(!Terminal::kbhit()){
@@ -106,11 +106,11 @@ void Utils::waitForAnyKey(){
     }
     Terminal::getch();
 }
-
+//wait for "ms" ms
 void Utils::sleepMs(int ms){
     this_thread::sleep_for(chrono::milliseconds(ms));
 }
-
+//create the format of the health bar
 string Utils::formatHealthBar(int current,int max,int width){
     double percent=(double)current/max;
     int filled=width*percent;
@@ -128,7 +128,7 @@ string Utils::formatHealthBar(int current,int max,int width){
     bar+="] "+to_string(current)+"/"+to_string(max)+" HP";
     return bar;
 }
-
+//create the format of the resonance bar
 string Utils::formatResonanceBar(int current,int width){
     double percent=(double)current/100;
     int filled=width*percent;
@@ -143,7 +143,7 @@ string Utils::formatResonanceBar(int current,int width){
     bar+="]"+to_string(current)+"/100";
     return bar;
 }
-
+//random number generator
 int Utils::randomInt(int leftBound,int rightBound){
     return rand()%(rightBound-leftBound+1)+leftBound;
 }

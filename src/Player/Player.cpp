@@ -52,6 +52,30 @@ int Player::getItemCount(string& itemName) {
     return count;
 }
 
+Item* Player::getBestWeapon() {
+    Item* bestWeapon = nullptr;
+    for (Item* item : inventory) {
+        if (item && item->category == CATEGORY_WEAPON) {
+            if (!bestWeapon || item->damage > bestWeapon->damage) {
+                bestWeapon = item;
+            }
+        }
+    }
+    return bestWeapon;
+}
+
+bool Player::removeSpecificItem(Item* target) {
+    if (!target) return false;
+    for (auto it = inventory.begin(); it != inventory.end(); ++it) {
+        if (*it == target) {
+            delete *it;
+            inventory.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
 void Player::displayInventory() {
     cout << "=== BASICS ===" << endl;
     cout << "HP: " << hp << " | STAMINA: " << stamina << " | MONEY: " << money << endl;

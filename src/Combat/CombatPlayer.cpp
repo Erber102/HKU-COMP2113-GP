@@ -3,49 +3,78 @@
 #include "utils.h"
 #include<iostream>
 #include<memory>
-#include "backpack.h"
 #include<algorithm>
 using namespace std;
-
-CombatPlayer::CombatPlayer(const string &name):Character(name,100),harmony(5),combo(0),extraTurns(0){
+//initiate combat settings of player, runes, and note effects
+CombatPlayer::CombatPlayer(const string &name)
+:Character(name,100),harmony(5),combo(0),extraTurns(0),
+ weaponBonusDamage(0),equippedWeaponName("Bare Hands"),
+ weaponNeedsAmmo(false),weaponDurability(-1){
     addRune(std::unique_ptr<Rune>(new Rune("Cure Rune",vector<Note>{DO,RE,DO},"Heal",20,GREEN)));
     addRune(std::unique_ptr<Rune>(new Rune("Attack Rune",vector<Note>{MI,FA,MI},"Damage",25,RED)));
     addRune(std::unique_ptr<Rune>(new Rune("Defense Rune",vector<Note>{SOL,LA,SOL},"Defense",15,BLUE)));
     addNoteEffect(DO,std::unique_ptr<NoteEffect>(new NoteEffect("Heal","Recover small amount of health",8,GREEN)));
     addNoteEffect(RE,std::unique_ptr<NoteEffect>(new NoteEffect("Power up","Recover resonance",10,BLUE)));
     addNoteEffect(MI,std::unique_ptr<NoteEffect>(new NoteEffect("Attack","Damage the enemy",12,RED)));
-    addNoteEffect(FA,std::unique_ptr<NoteEffect>(new NoteEffect("Shield","Aquire temper defense",5,CYAN)));
+    addNoteEffect(FA,std::unique_ptr<NoteEffect>(new NoteEffect("Shield","aquire temper defense",5,CYAN)));
     addNoteEffect(SOL,std::unique_ptr<NoteEffect>(new NoteEffect("Purge","Rurge and recover small amount of health",5,MAGENTA)));
     addNoteEffect(LA,std::unique_ptr<NoteEffect>(new NoteEffect("Variation","Random effect",0,WHITE)));
     addNoteEffect(SI,std::unique_ptr<NoteEffect>(new NoteEffect("Accumulation","Extra turns",0,WHITE)));
-    initBackpack();
-}
-void CombatPlayer::initBackpack() {
-    initBackpack(backpack, "战斗背包", 10);
 }
 
+void CombatPlayer::setWeaponBonus(int bonus, const std::string& weaponName, bool needsAmmo, int durability){
+    weaponBonusDamage = bonus;
+    weaponNeedsAmmo = needsAmmo;
+    equippedWeaponName = weaponName.empty() ? "Bare Hands" : weaponName;
+    weaponDurability = durability;
+}
+
+void CombatPlayer::setHealingCallback(std::function<int()> func){
+    consumeHealingItemFunc = func;
+}
+
+void CombatPlayer::setAmmoCallback(std::function<bool()> func){
+    consumeAmmoCallback = func;
+}
+
+// Sets the callback function for opening backpack during combat
+// This enables backpack functionality integration into the combat phase
+void CombatPlayer::setBackpackCallback(std::function<void()> func){
+    openBackpackCallback = func;
+}
+
+void CombatPlayer::setWeaponUsageCallback(std::function<void()> func){
+    weaponUsageCallback = func;
+}
+//increase harmony by 1
 void CombatPlayer::increaseHarmony(){
     harmony=min(10,harmony+1);
 }
+//increase combo by 1
 void CombatPlayer::increaseCombo(){
     combo++;
 }
+//reset the combo to 0
 void CombatPlayer::resetCombo(){
     combo=0;
 }
+//return the value of combo
 int CombatPlayer::getCombo(){
     return combo;
 }
+//reture the value of harmony
 int CombatPlayer::getHarmony(){
     return harmony;
 }
+//check whether the player has extra turns 
 bool CombatPlayer::hasExtraTurns(){
     return extraTurns>0;
 }
+//use the extra turn
 void CombatPlayer::useExtraTurn(){
     if(extraTurns>0)extraTurns--;
 }
-//check if the rune is activated
+//check if any rune is activated, target refers to the enemy the rune is applied on 
 bool CombatPlayer::activateRune(Character &target){
     int activeRuneIndex=checkMelody();
     if(activeRuneIndex==-1)return 0;
@@ -61,7 +90,6 @@ bool CombatPlayer::activateRune(Character &target){
                 return 1;
             }
             else {
-                InputSystem::waitForAnyKey();
                 break;
             }
         }
@@ -69,62 +97,52 @@ bool CombatPlayer::activateRune(Character &target){
     }
     return 0;
 }
+//flow of player's turn, target represents the enemy
 void CombatPlayer::takeTurn(Character &target){
-    InputSystem::clearScreen();
-    InputSystem::drawTitle("Your Turn");
-    
-    // 检查生命值，如果过低提示使用道具
-    if (getHealth() < 30) {
-        cout << RED << "警告：生命值过低！" << RESET << endl;
-        
-        // 检查背包中是否有恢复道具
-        bool hasRecoveryItem = false;
-        for (int i = 0; i < backpack.itemCount; i++) {
-            if (backpack.items[i]->isEdible && backpack.items[i]->healthEffect > 0) {
-                hasRecoveryItem = true;
-                break;
+    bool actionTaken = false;
+    while(!actionTaken){
+        //information display
+        InputSystem::clearScreen();
+        InputSystem::drawTitle("Your Turn");
+        cout<<endl<<"Health:    "<<getHealthBar();
+        cout<<endl;
+        cout<<"Resonance: "<<getResonanceBar();
+        cout<<" Harmony: "<<YELLOW<<harmony<<"/10"<<RESET;
+        cout<<" | Combo: "<<CYAN<<combo<<RESET;
+        if(extraTurns>0){
+            cout<<" | extra turn: "<<GREEN<< extraTurns<<RESET;
+        }
+        cout<<endl<<"Weapon: "<<WHITE<<equippedWeaponName<<RESET;
+        if(weaponBonusDamage > 0){
+            cout<<" (+"<<weaponBonusDamage<<" dmg";
+            if(weaponNeedsAmmo) cout<<", uses ammo";
+            if(weaponDurability >= 0) cout<<", dur "<<weaponDurability;
+            cout<<")";
+        } else {
+            cout<<" (bare hands)";
+        }
+        cout<<endl;
+        cout<<getMelodyDisplay()<<endl<<endl;
+        showNoteInputMenu();
+        if(activateRune(target))return ;
+        //wait for further input
+        cout<<YELLOW<<"Please select an operation to continue..."<<RESET<<endl;
+        bool inputHandled = false;
+        while(!inputHandled){
+            if(InputSystem::kbhit()){
+                char key=InputSystem::getch();
+                bool consumed = handleInput(key,target);
+                if(consumed){
+                    changeResonance(5);
+                    actionTaken = true;
+                }
+                inputHandled = true;
             }
+            InputSystem::sleepMs(100);
         }
-        
-        if (hasRecoveryItem) {
-            cout << YELLOW << "背包中有恢复道具，按 [8] 查看并使用" << RESET << endl;
-        }
-        cout << endl;
     }
-    
-    //display player health
-    cout<<endl<<"Health:    "<<getHealthBar();
-    cout<<endl;
-
-    
-            // cout<<"!!"<<getResonance()<<endl;
-    //display player health
-    cout<<endl<<"Your health:    "<<getHealthBar()<<endl;
-    cout<<"Enemy's health: "<<target.getHealthBar()<<endl<<endl;
-    cout<<endl;
-    //display resonance
-    cout<<"Resonance: "<<getResonanceBar();
-    cout<<" Harmony: "<<YELLOW<<harmony<<"/10"<<RESET;
-    cout<<" | Combo: "<<CYAN<<combo<<RESET;
-    if(extraTurns>0){
-        cout<<" | extra turn: "<<GREEN<< extraTurns<<RESET;
-    }
-    cout<<endl;
-    //display current melody
-    cout<<getMelodyDisplay()<<endl<<endl;
-    showNoteInputMenu();
-    if(activateRune(target))return ;
-    cout<<YELLOW<<"Please select an operation to continue..."<<RESET<<endl;
-    while(1){
-        if(InputSystem::kbhit()){
-            char key=InputSystem::getch();
-            handleInput(key,target);
-            break;
-        }
-        InputSystem::sleepMs(100);
-    }
-    changeResonance(5);
 }
+//function for displaying the simplified effects of the notes
 void CombatPlayer::showNoteInputMenu(){
     InputSystem::drawSeparator();
     cout<<BOLD<<"Play note: "<<RESET<<endl;
@@ -136,12 +154,12 @@ void CombatPlayer::showNoteInputMenu(){
     cout<<" [5] SOL - "<<YELLOW<<"Purge"<<RESET<<endl;
     cout<<" [6] LA  - "<<MAGENTA<<"Variation"<<RESET<<endl;
     cout<<" [7] SI  - "<<WHITE<<"Extra turns"<<RESET<<endl;
-    cout<<" [8] B   - "<<WHITE<<"Check backpack"<<RESET<<endl;
+    cout<<" [B] Open backpack (switch weapon)"<<endl; // Display backpack option and allows accessing inventory during combat
     cout<<endl;
 }
-void CombatPlayer::handleInput(char key,Character &target){
+//relate the keys to the effect functions
+bool CombatPlayer::handleInput(char key,Character &target){
     bool notePlayed=1;
-    //relate the keys to the effects
     switch(key){
         case '1':
             addNoteToMelody(DO);
@@ -171,47 +189,49 @@ void CombatPlayer::handleInput(char key,Character &target){
             addNoteToMelody(SI);
             applyNoteEffect(SI,target);
             break;
-        case '8':  // 新增背包查看
         case 'b':
         case 'B':
-            showBackpackAndUseItem(target);
-            notePlayed = 0;
-            break;
+            // Player can press 'B' to open backpack and switch weapons
+            if(openBackpackCallback){
+                openBackpackCallback();
+            } else {
+                cout<<RED<<"Backpack unavailable."<<RESET<<endl;
+                InputSystem::waitForAnyKey();
+            }
+            return false;
         default:
             cout<<RED<<"Invalid input! Please use 1-8 to play note"<<RESET<<endl;
             notePlayed=0;
     }
     if(notePlayed){
-        //check and increase combo
         increaseCombo();
         if(combo%5==0){
             cout<<BOLD<<CYAN<<"Combo "<<combo<<"! Resonance increased !"<<RESET<<endl;
             changeResonance(combo);
         }
-        //check if there are activated rune
         activateRune(target);
+        if(key!=' ')InputSystem::waitForAnyKey();
+        return true;
     }
-    else {
-        while(1){
-            if(InputSystem::kbhit()){
-                char key=InputSystem::getch();
-                handleInput(key,target);
-                break;
-            }
-            InputSystem::sleepMs(100);
-        }
-    }
+    if(key!='b' && key!='B') InputSystem::waitForAnyKey();
+    return false;
 }
-//applying the specific note effect
+//applying the specific note effect. note is the note applied, target refers to the enemy
 void CombatPlayer::applyNoteEffect(Note note,Character &target){
     const NoteEffect *effect=getNoteEffect(note);
     if(!effect)return ;
     cout<<BOLD<<effect->color<<effect->name<<"!"<<RESET<<endl;
     switch(note){
         case DO:
-            {int healAmount=effect->power+harmony;
+            {
+            int itemHeal = consumeHealingItemFunc ? consumeHealingItemFunc() : 0;
+            if(itemHeal <= 0){
+                cout<<RED<<"No medical supplies available! Heal failed."<<RESET<<endl;
+                break;
+            }
+            int healAmount=itemHeal;
             heal(healAmount);
-            cout<<GREEN<<"Recovered "<<healAmount<<" points of health"<<RESET<<endl;
+            cout<<GREEN<<"Used medical supplies to recover "<<healAmount<<" HP"<<RESET<<endl;
             break;}
         case RE:
             {int resonanceAmount=effect->power+(combo/2);
@@ -219,9 +239,13 @@ void CombatPlayer::applyNoteEffect(Note note,Character &target){
             cout<<BLUE<<"Recovered "<<resonanceAmount<<" points of resonance"<<RESET<<endl;
             break;}
         case MI:
-            {int damage=effect->power+harmony;
+            {int weaponBonus = getWeaponBonusDamage();
+            int damage=effect->power+harmony+weaponBonus;
             target.takeDamage(damage);
             cout<<RED<<target.getName()<<" got "<<damage<<" points of damage"<<RESET<<endl;
+            if(weaponBonus > 0 && weaponUsageCallback){
+                weaponUsageCallback();
+            }
             break;}
         case FA:
             {int defenseAmount=effect->power+(harmony/2);
@@ -240,8 +264,8 @@ void CombatPlayer::applyNoteEffect(Note note,Character &target){
             applyNoteEffect(randomNote,target);
             break;}
         case SI:
-            {if(resonance>=30){
-                    changeResonance(-30);
+            {if(resonance>=10){
+                    changeResonance(-10);
                     extraTurns+=2;
                     cout<<WHITE<<"Aquire extra turns"<<RESET<<endl;
                 }
@@ -254,8 +278,8 @@ void CombatPlayer::applyNoteEffect(Note note,Character &target){
         default:
             break;
     }
-    InputSystem::sleepMs(2000);
 }
+//apply the rune effects, rune is the rune applied, target refers to the enemy
 void CombatPlayer::applyRuneEffect(const Rune &rune,Character &target){
     int effectPower=rune.power+(harmony*2)+(combo/2);
     cout<<BOLD<<rune.color<<"\n"<<rune.name<<" activated"<<RESET<<endl;
@@ -264,8 +288,12 @@ void CombatPlayer::applyRuneEffect(const Rune &rune,Character &target){
         cout<<GREEN<<effectPower<<" healed"<<RESET<<endl;
     }
     else if(rune.name=="Attack Rune"){
-        target.takeDamage(effectPower);
-        cout<<RED<<target.getName()<<" took "<<effectPower<<" points of damage"<<RESET<<endl;
+        int totalDamage = effectPower + getWeaponBonusDamage();
+        target.takeDamage(totalDamage);
+        cout<<RED<<target.getName()<<" took "<<totalDamage<<" points of damage"<<RESET<<endl;
+        if(totalDamage > effectPower && weaponUsageCallback){
+            weaponUsageCallback();
+        }
     }
     else if(rune.name=="Defense Rune"){
         setDefense(getDefense()+effectPower);
@@ -288,83 +316,16 @@ void CombatPlayer::activeRune(int runeIndex,Character &target){
         InputSystem::waitForAnyKey();
     }
 }
+//reset the defense after each round
 void CombatPlayer::resetTurn(){
     defense=0;
 }
 
-void CombatPlayer::showBackpackAndUseItem(Character &target) {
-    InputSystem::clearScreen();
-    InputSystem::drawTitle("背包物品");
-    
-    if (backpack.itemCount == 0) {
-        cout << RED << "背包为空！" << RESET << endl;
-        InputSystem::waitForAnyKey();
-        return;
+int CombatPlayer::getWeaponBonusDamage(){
+    if(weaponBonusDamage <= 0) return 0;
+    if(!weaponNeedsAmmo) return weaponBonusDamage;
+    if(consumeAmmoCallback){
+        return consumeAmmoCallback() ? weaponBonusDamage : 0;
     }
-    
-    // 显示背包内容
-    displayBackpackItems(backpack);
-    
-    // 检查是否有可食用道具
-    bool hasEdible = false;
-    for (int i = 0; i < backpack.itemCount; i++) {
-        if (backpack.items[i]->isEdible) {
-            hasEdible = true;
-            break;
-        }
-    }
-    
-    if (!hasEdible) {
-        cout << YELLOW << "背包中没有可食用道具" << RESET << endl;
-        InputSystem::waitForAnyKey();
-        return;
-    }
-    
-    // 让玩家选择使用道具
-    cout << YELLOW << "输入道具编号使用（输入0取消）: " << RESET;
-    
-    while (true) {
-        if (InputSystem::kbhit()) {
-            char choice = InputSystem::getch();
-            
-            if (choice == '0') {
-                cout << "取消使用道具" << endl;
-                break;
-            }
-            
-            int itemIndex = choice - '1';  // 转换为索引（1-based转0-based）
-            if (itemIndex >= 0 && itemIndex < backpack.itemCount) {
-                Item* selectedItem = getItemFromBackpack(backpack, itemIndex);
-                if (selectedItem && selectedItem->isEdible) {
-                    // 使用道具
-                    useItemFromBackpack(backpack, itemIndex);
-                    cout << GREEN << "使用了 " << selectedItem->name << RESET << endl;
-                    
-                    // 应用治疗效果
-                    int healAmount = selectedItem->healthEffect;
-                    heal(healAmount);
-                    cout << GREEN << "恢复了 " << healAmount << " 点生命值" << RESET << endl;
-                    
-                    // 如果还有体力效果
-                    if (selectedItem->staminaEffect > 0) {
-                        // 恢复共鸣值
-                        changeResonance(selectedItem->staminaEffect);
-                        cout << BLUE << "恢复了 " << selectedItem->staminaEffect << " 点共鸣" << RESET << endl;
-                    }
-                    
-                    // 使用道具后结束当前回合
-                    cout << YELLOW << "使用道具结束当前回合" << RESET << endl;
-                    InputSystem::waitForAnyKey();
-                    return;
-                } else {
-                    cout << RED << "该道具无法使用！" << RESET << endl;
-                }
-            } else {
-                cout << RED << "无效的选择！" << RESET << endl;
-            }
-        }
-        InputSystem::sleepMs(100);
-    }
-    
-    InputSystem::waitForAnyKey();
+    return 0;
 }

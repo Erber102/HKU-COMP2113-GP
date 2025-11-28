@@ -91,6 +91,7 @@ void Terminal::drawTitle(string title){
 }
 //notes to string
 //note: note needed
+//returns the coverted string
 string Utils::noteToString(Note note){
     switch(note){
         case DO:return "Do";
@@ -120,6 +121,7 @@ void Utils::sleepMs(int ms){
 //current: current health
 //max: maximum health
 //width: width of terminal
+//returns the formated bar
 string Utils::formatHealthBar(int current,int max,int width){
     double percent=(double)current/max;
     int filled=width*percent;
@@ -140,6 +142,7 @@ string Utils::formatHealthBar(int current,int max,int width){
 //create the format of the resonance bar and returns the resonance bar
 //current: current resonance
 //width: width of the terminal
+//returns the formated bar
 string Utils::formatResonanceBar(int current,int width){
     double percent=(double)current/100;
     int filled=width*percent;

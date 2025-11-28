@@ -13,8 +13,8 @@ struct Item;
  * Each customer wants to buy specific items with certain quantities
  */
 struct Customer {
-    std::string name;              // Customer name (e.g., "老猎人", "焦虑的母亲")
-    std::string desired_item;      // Item they want to buy (e.g., "罐头食品")
+    std::string name;              // Customer name 
+    std::string desired_item;      // Item they want to buy 
     int desired_quantity;          // Quantity they want to buy
     int patience;                  // How long they can tolerate your price
     int base_price;                // Base price they're willing to pay per item
@@ -45,4 +45,5 @@ std::string getRandomCustomerName();
 std::string getRandomDesiredItem();
 
 #endif // CUSTOMER_H
+
 

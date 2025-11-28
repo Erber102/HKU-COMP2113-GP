@@ -236,7 +236,16 @@ bool CombatPlayer::handleInput(char key,Character &target){
         if(key!=' ')InputSystem::waitForAnyKey();
         return true;
     }
-    if(key!='b' && key!='B') InputSystem::waitForAnyKey();
+    if(key!='b' && key!='B'){
+        while(1){
+            if(InputSystem::kbhit()){
+                char key=InputSystem::getch();
+                handleInput(key,target);
+                break;
+            }
+            InputSystem::sleepMs(100);
+        }
+    }
     return false;
 }
 //applying the specific note effect

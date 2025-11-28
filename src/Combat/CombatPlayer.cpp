@@ -90,6 +90,7 @@ void CombatPlayer::useExtraTurn(){
 }
 //check if any rune is activated
 //target: enemy the rune is applied on 
+//return 1 for activated, 0 or not activated
 bool CombatPlayer::activateRune(Character &target){
     int activeRuneIndex=checkMelody();
     if(activeRuneIndex==-1)return 0;
@@ -179,6 +180,7 @@ void CombatPlayer::showNoteInputMenu(){
 //relate the keys to the effect functions
 //key: related key
 //target: the target the effect is applied on
+//returns 1 if the input is correctly handed, else 0
 bool CombatPlayer::handleInput(char key,Character &target){
     bool notePlayed=1;
     switch(key){

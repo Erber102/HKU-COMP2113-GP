@@ -66,10 +66,12 @@ const vector<Note> &Character::getMelody()const{
     return melody;
 }
 //check if the character is alive
+//returns 1 for alive and else 0
 bool Character::isAlive()const{
     return health>0;
 }
 //check if any melody matches the rune
+//returns the index of the available rune
 int Character::checkMelody(){
     for(int i=0;i<(int)runes.size();i++){
         const auto &rune=runes[i];
@@ -86,16 +88,19 @@ int Character::checkMelody(){
     return -1;
 }
 //display the health bar
+//returns the displayed bar
 string Character::getHealthBar()const{
     int barWidth=min(20,Terminal::getTerminalWidth()/4);
     return Utils::formatHealthBar(health,maxHealth,barWidth);
 }
 //display the resonance bar
+//returns the displayed bar
 string Character::getResonanceBar()const{
     int barWidth=min(20,Terminal::getTerminalWidth()/4);
     return Utils::formatResonanceBar(resonance,barWidth);
 }
 //display the melody queue
+//returns the displayed queue
 string Character::getMelodyDisplay()const{
     string display;
     if(melody.empty())display=YELLOW+string("Current melody: Empty")+RESET;

@@ -15,6 +15,10 @@ using namespace std;
 // Define constants declared in Config.h
 const char* SAVE_FILE_NAME = "savegame.dat";
 
+// Constructor: Initializes game state and modules
+// What it does: Sets up initial game state and calls module initialization
+// Inputs: None
+// Outputs: None (constructor)
 Game::Game() : currentState(MAIN_MENU), currentDay(1),
                dayPhase(nullptr), nightPhase(nullptr),
                saveSystem(nullptr), market(nullptr),
@@ -22,10 +26,18 @@ Game::Game() : currentState(MAIN_MENU), currentDay(1),
     initializeModules();
 }
 
+// Destructor: Cleans up dynamically allocated modules
+// What it does: Deletes all module instances to prevent memory leaks
+// Inputs: None
+// Outputs: None (destructor)
 Game::~Game() {
     cleanupModules();
 }
 
+// Initializes all game modules and systems
+// What it does: Creates instances of map, save system, market, and other core components
+// Inputs: None
+// Outputs: None
 void Game::initializeModules() {
     // Initialize other modules
     cout << "Initializing game modules..." << endl;
@@ -47,6 +59,10 @@ void Game::initializeModules() {
     nightPhase = nullptr;
 }
 
+// Cleans up dynamically allocated modules to prevent memory leaks
+// What it does: Safely deletes all module instances created during initialization
+// Inputs: None
+// Outputs: None
 void Game::cleanupModules() {
     // Clean up dynamically allocated objects
     if (dayPhase) delete dayPhase;
@@ -57,6 +73,10 @@ void Game::cleanupModules() {
     if (combat) delete combat;
 }
 
+// Main game loop that runs the entire game
+// What it does: Initializes systems, handles game state transitions, and runs until game over
+// Inputs: None
+// Outputs: None
 void Game::run() {
     InputSystem::initialize();
     UISystem::showInfo("Game initialized successfully");
@@ -85,15 +105,27 @@ void Game::run() {
     cout << "GAME OVER" << endl;
 }
 
+// Sets the current game state
+// What it does: Updates the game state to control game flow between different phases
+// Inputs: newState - The new game state to transition to
+// Outputs: None
 void Game::setState(GameState newState) {
     currentState = newState;
 }
 
+// Advances the game to the next day
+// What it does: Increments day counter and displays day transition message
+// Inputs: None
+// Outputs: None
 void Game::advanceDay() {
     currentDay++;
     UISystem::showInfo("DAY " + to_string(currentDay));
 }
 
+// Starts a new game with initial setup
+// What it does: Resets player state, sets up difficulty, and initializes game
+// Inputs: None
+// Outputs: None
 void Game::startNewGame() {
     // Reset player state
     player = Player();
@@ -143,6 +175,10 @@ void Game::startNewGame() {
     UISystem::endSection();
 }
 
+// Loads a saved game from file
+// What it does: Checks for save file existence and loads player data and day
+// Inputs: None
+// Outputs: bool - True if load successful, false otherwise
 bool Game::loadGame() {
     UISystem::startSection("LOAD GAME");
 
@@ -165,12 +201,20 @@ bool Game::loadGame() {
     return true;
 }
 
+// Saves the current game state to file
+// What it does: Serializes player data and current day to save file
+// Inputs: None
+// Outputs: None
 void Game::saveGame() {
     UISystem::startSection("SAVE GAME");
     SaveSystem::saveGame(player, currentDay);
     UISystem::endSection();
 }
 
+// Checks if game over conditions are met
+// What it does: Checks if player is dead and transitions to game over state if true
+// Inputs: None
+// Outputs: None
 void Game::checkGameOver() {
     if (!player.isAlive()) {
         UISystem::startSection("GAME OVER");
@@ -181,6 +225,10 @@ void Game::checkGameOver() {
     }
 }
 
+// Starts the day phase of the game
+// What it does: Generates daily map and executes day phase activities
+// Inputs: None
+// Outputs: None
 void Game::startDayPhase() {
     cout << "\n=== DAY " << currentDay << " : DAY TIME ===" << endl;
 
@@ -198,6 +246,10 @@ void Game::startDayPhase() {
     currentState = NIGHT;
 }
 
+// Starts the night phase of the game
+// What it does: Displays player status and executes night phase trading activities
+// Inputs: None
+// Outputs: None
 void Game::startNightPhase() {
     cout << "\n=== DAY " << currentDay << " : NIGHT TIME ===" << endl;
 
@@ -217,6 +269,10 @@ void Game::startNightPhase() {
     currentState = DAY;
 }
 
+// Starts the combat phase of the game
+// What it does: Initializes combat player and starts combat with enemies
+// Inputs: None
+// Outputs: None
 void Game::startCombatPhase() {
     cout << "\n=== COMBAT PHASE ===" << endl;
 
@@ -241,6 +297,10 @@ void Game::startCombatPhase() {
     currentState = DAY;
 }
 
+// Handles the main menu interface and user selections
+// What it does: Displays main menu options and processes user choices
+// Inputs: None
+// Outputs: None
 void Game::handleMainMenu() {
     vector<string> menuOptions = {
         "Start a New Game",

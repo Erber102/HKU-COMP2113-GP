@@ -9,6 +9,11 @@ using namespace std;
 
 string SaveSystem::saveFileName = "savegame.dat";
 
+// Serializes player data to binary file
+// What it does: Writes player HP, stamina, and money to save file
+// Inputs: file - Output file stream
+//         player - Player object to serialize
+// Outputs: None
 void SaveSystem::serializePlayer(ofstream& file, Player& player) {
     // Simplified player serialization
     file.write(reinterpret_cast<const char*>(&player.hp), sizeof(player.hp));
@@ -16,6 +21,11 @@ void SaveSystem::serializePlayer(ofstream& file, Player& player) {
     file.write(reinterpret_cast<const char*>(&player.money), sizeof(player.money));
 }
 
+// Deserializes player data from binary file
+// What it does: Reads player HP, stamina, and money from save file
+// Inputs: file - Input file stream
+//         player - Player object to populate with loaded data
+// Outputs: bool - True if deserialization successful, false otherwise
 bool SaveSystem::deserializePlayer(ifstream& file, Player& player) {
     // Simplified player deserialization
     file.read(reinterpret_cast<char*>(&player.hp), sizeof(player.hp));
@@ -25,6 +35,11 @@ bool SaveSystem::deserializePlayer(ifstream& file, Player& player) {
     return !file.fail();
 }
 
+// Serializes inventory data to binary file
+// What it does: Compresses inventory by counting items and writes to save file
+// Inputs: file - Output file stream
+//         inventory - Vector of item pointers to serialize
+// Outputs: None
 void SaveSystem::serializeInventory(ofstream& file, vector<Item*>& inventory) {
     // Compress inventory: count of items with the same name
     std::map<std::string, int> counts;
@@ -46,6 +61,11 @@ void SaveSystem::serializeInventory(ofstream& file, vector<Item*>& inventory) {
     }
 }
 
+// Deserializes inventory data from binary file
+// What it does: Rebuilds inventory from compressed save data
+// Inputs: file - Input file stream
+//         player - Player object to populate with loaded inventory
+// Outputs: bool - True if deserialization successful, false otherwise
 bool SaveSystem::deserializeInventory(ifstream& file, Player& player) {
     // Clear existing inventory and rebuild items from name and count
     player.clearInventory();
@@ -78,6 +98,11 @@ bool SaveSystem::deserializeInventory(ifstream& file, Player& player) {
     return !file.fail();
 }
 
+// Saves game state to file
+// What it does: Writes player data, inventory, and day to save file
+// Inputs: player - Player object to save
+//         day - Current day number to save
+// Outputs: None
 void SaveSystem::saveGame(Player& player, int day) {
     ofstream file(saveFileName, ios::binary);
 
@@ -111,6 +136,11 @@ void SaveSystem::saveGame(Player& player, int day) {
     }
 }
 
+// Loads game state from file
+// What it does: Reads player data, inventory, and day from save file
+// Inputs: player - Player object to populate with loaded data
+//         day - Reference to store loaded day number
+// Outputs: bool - True if load successful, false otherwise
 bool SaveSystem::loadGame(Player& player, int& day) {
     ifstream file(saveFileName, ios::binary);
 
@@ -158,11 +188,19 @@ bool SaveSystem::loadGame(Player& player, int& day) {
     }
 }
 
+// Checks if save file exists
+// What it does: Verifies whether the save file exists on disk
+// Inputs: None
+// Outputs: bool - True if save file exists, false otherwise
 bool SaveSystem::saveExists() {
     ifstream file(saveFileName);
     return file.good();
 }
 
+// Deletes save file from disk
+// What it does: Removes the save file if it exists
+// Inputs: None
+// Outputs: None
 void SaveSystem::deleteSave() {
     if (remove(saveFileName.c_str()) == 0) {
         cout << "Save file deleted!" << endl;

@@ -3,10 +3,18 @@
 #include <random>
 #include <algorithm>
 
+// Constructor: Initializes map with location prototypes
+// What it does: Creates map instance and sets up location templates
+// Inputs: None
+// Outputs: None (constructor)
 Map::Map() {
     initializePrototypes();
 }
 
+// Initializes location prototypes with different danger levels
+// What it does: Sets up predefined location templates with items and probabilities
+// Inputs: None
+// Outputs: None
 void Map::initializePrototypes() {
     // Define location templates with different danger levels
     locationPrototypes = {
@@ -32,6 +40,10 @@ void Map::initializePrototypes() {
     };
 }
 
+// Generates daily map with locations based on current day
+// What it does: Creates random locations with adjusted danger levels for the day
+// Inputs: currentDay - Current day number for difficulty scaling
+// Outputs: None
 void Map::generateDailyMap(int currentDay) {
     dailyLocations.clear();
     locationCompleted.clear();
@@ -60,6 +72,10 @@ void Map::generateDailyMap(int currentDay) {
     }
 }
 
+// Gets list of available (uncompleted) locations
+// What it does: Returns pointers to locations that haven't been completed yet
+// Inputs: None
+// Outputs: vector<Location*> - List of available location pointers
 std::vector<Location*> Map::getAvailableLocations() {
     std::vector<Location*> available;
 
@@ -72,6 +88,10 @@ std::vector<Location*> Map::getAvailableLocations() {
     return available;
 }
 
+// Marks a location as completed
+// What it does: Sets location completion status to true for the specified location
+// Inputs: loc - Pointer to location to mark as completed
+// Outputs: None
 void Map::completeLocation(Location* loc) {
     for (size_t i = 0; i < dailyLocations.size(); ++i) {
         if (&dailyLocations[i] == loc) {

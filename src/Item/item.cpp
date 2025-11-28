@@ -2,7 +2,10 @@
 #include <iostream>
 using namespace std;
 
-// display item information
+// Displays detailed information about an item
+// What it does: Shows item name, description, value, category, and specific attributes
+// Inputs: item - Item object to display information for
+// Outputs: None
 void showItemInfo(Item item) {
     cout << "=== " << item.name << " ===" << endl;
     cout << "Description: " << item.description << endl;

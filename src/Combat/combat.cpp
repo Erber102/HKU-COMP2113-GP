@@ -7,7 +7,12 @@
 #include<cstdlib>
 #include<ctime>
 using namespace std;
-//Initializing the player and enemies
+// Constructor: Initializes combat system with player and enemies
+// What it does: Sets up combat player, weapons, enemies, and input system
+// Inputs: owner - Pointer to Player object
+//         ply - Player name string
+//         startingWeapon - Initial weapon for combat
+// Outputs: None (constructor)
 Combat::Combat(Player* owner, const string &ply, Item* startingWeapon)
 :currentEnemyIndex(0),score(0),playerRef(owner){
     srand(time(0));
@@ -23,11 +28,17 @@ Combat::Combat(Player* owner, const string &ply, Item* startingWeapon)
     enemies.push_back(std::unique_ptr<Enemy>(new Enemy("Final Symphony","Rhythm Breaker",120)));
     InputSystem::setNonBlockingInput();
 }
-//restoring the setting of the terminal
+// Destructor: Restores terminal settings
+// What it does: Returns terminal to original state after combat
+// Inputs: None
+// Outputs: None (destructor)
 Combat::~Combat(){
     InputSystem::restoreTerminal();
 }
-//use the index to distinguish the enemy the player is dealing with
+// Executes combat against a specific enemy
+// What it does: Runs combat loop with turn-based mechanics against specified enemy
+// Inputs: enemyIndex - Index of enemy to fight
+// Outputs: None
 void Combat::fightEnemy(int enemyIndex){
     Enemy &enemy=*enemies[enemyIndex];
     //show the name of encountered enemy
@@ -62,11 +73,17 @@ void Combat::fightEnemy(int enemyIndex){
     }
     else showGameOver();
 }
-//equip then weapon "weaponPtr"
+// Equips a weapon for combat
+// What it does: Sets the specified weapon as current weapon
+// Inputs: weaponPtr - Pointer to weapon item to equip
+// Outputs: None
 void Combat::equipWeapon(Item* weaponPtr){
     setCurrentWeapon(weaponPtr);
 }
-//use healing item
+// Uses best healing item from inventory
+// What it does: Finds and consumes best healing item, returns healing amount
+// Inputs: None
+// Outputs: int - Amount of health restored (0 if no healing items)
 int Combat::useHealingItem(){
     if(!playerRef) return 0;
     vector<Item*>& inv = playerRef->getInventory();
@@ -88,7 +105,10 @@ int Combat::useHealingItem(){
     cout<<CYAN<<"Consumed "<<itemName<<" for healing."<<RESET<<endl;
     return healAmount;
 }
-// consume ammo
+// Consumes ammo for current weapon if needed
+// What it does: Checks if weapon needs ammo and consumes one if available
+// Inputs: None
+// Outputs: bool - True if ammo consumed or not needed, false if no ammo
 bool Combat::consumeAmmoForCurrentWeapon(){
     if(!currentWeapon.needsAmmo) return true;
     if(!playerRef) return false;
@@ -104,7 +124,10 @@ bool Combat::consumeAmmoForCurrentWeapon(){
     InputSystem::waitForAnyKey();
     return false;
 }
-// open weapon menu
+// Opens weapon selection menu from backpack
+// What it does: Displays available weapons and allows player to equip one
+// Inputs: None
+// Outputs: None
 void Combat::openWeaponMenu(){
     if(!playerRef){
         cout<<RED<<"Cannot access backpack right now."<<RESET<<endl;
@@ -217,7 +240,10 @@ void Combat::handleWeaponDurability(){
         applyEquippedWeapon();
     }
 }
-//calculate the reward of the combat given the "enemyIndex"
+// Calculates combat reward based on enemy index
+// What it does: Returns money reward for defeating specified enemy
+// Inputs: enemyIndex - Index of defeated enemy
+// Outputs: int - Reward amount in money
 int Combat::calculateReward(int enemyIndex) const{
     static const int rewards[] = {15, 30, 45, 70};
     if(enemyIndex < 0) return 0;
@@ -227,7 +253,10 @@ int Combat::calculateReward(int enemyIndex) const{
     }
     return rewards[cappedIndex];
 }
-//intro panel to the rune
+// Displays rune system introduction
+// What it does: Shows rune combinations and controls for combat
+// Inputs: None
+// Outputs: None
 void Combat::showRuneIntro(){
     cout<<BOLD<<MAGENTA;
     InputSystem::drawSeparator();
@@ -239,7 +268,10 @@ void Combat::showRuneIntro(){
     cout<<RED<<"3-4-3 Attack Rune"<<RESET<<endl;
     cout<<BLUE<<"5-6-5 Defense Rune"<<RESET<<endl;
 }
-//showing the panel for victory and game over
+// Displays victory screen
+// What it does: Shows victory message and clears screen
+// Inputs: None
+// Outputs: None
 void Combat::showVictory(){
     InputSystem::clearScreen();
     cout<<BOLD<<GREEN;
@@ -247,6 +279,11 @@ void Combat::showVictory(){
     InputSystem::sleepMs(2000);
     cout<<RESET;
 }
+
+// Displays game over screen
+// What it does: Shows defeat message and clears screen
+// Inputs: None
+// Outputs: None
 void Combat::showGameOver(){
     InputSystem::clearScreen();
     cout<<BOLD<<RED;

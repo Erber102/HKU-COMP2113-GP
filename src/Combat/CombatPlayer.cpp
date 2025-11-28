@@ -6,6 +6,7 @@
 #include<algorithm>
 using namespace std;
 //initiate combat settings of player, runes, and note effects
+//name: string name representing the player
 CombatPlayer::CombatPlayer(const string &name)
 :Character(name,100),harmony(5),combo(0),extraTurns(0),
  weaponBonusDamage(0),equippedWeaponName("Bare Hands"),
@@ -87,7 +88,8 @@ bool CombatPlayer::hasExtraTurns(){
 void CombatPlayer::useExtraTurn(){
     if(extraTurns>0)extraTurns--;
 }
-//check if any rune is activated, target refers to the enemy the rune is applied on 
+//check if any rune is activated
+//target: enemy the rune is applied on 
 bool CombatPlayer::activateRune(Character &target){
     int activeRuneIndex=checkMelody();
     if(activeRuneIndex==-1)return 0;
@@ -103,6 +105,7 @@ bool CombatPlayer::activateRune(Character &target){
                 return 1;
             }
             else {
+                InputSystem::waitForAnyKey();
                 break;
             }
         }
@@ -119,7 +122,8 @@ void CombatPlayer::takeTurn(Character &target){
         //information display
         InputSystem::clearScreen();
         InputSystem::drawTitle("Your Turn");
-        cout<<endl<<"Health:    "<<getHealthBar();
+        cout<<endl<<"Your health:    "<<getHealthBar()<<endl;
+        cout<<"Enemy's health: "<<target.getHealthBar()<<endl<<endl;
         cout<<endl;
         cout<<"Resonance: "<<getResonanceBar();
         cout<<" Harmony: "<<YELLOW<<harmony<<"/10"<<RESET;
@@ -173,6 +177,8 @@ void CombatPlayer::showNoteInputMenu(){
     cout<<endl;
 }
 //relate the keys to the effect functions
+//key: related key
+//target: the target the effect is applied on
 bool CombatPlayer::handleInput(char key,Character &target){
     bool notePlayed=1;
     switch(key){
@@ -215,7 +221,7 @@ bool CombatPlayer::handleInput(char key,Character &target){
             }
             return false;
         default:
-            cout<<RED<<"Invalid input! Please use 1-8 to play note"<<RESET<<endl;
+            cout<<RED<<"Invalid input! Please use 1-7 to play note"<<RESET<<endl;
             notePlayed=0;
     }
     if(notePlayed){
@@ -231,7 +237,9 @@ bool CombatPlayer::handleInput(char key,Character &target){
     if(key!='b' && key!='B') InputSystem::waitForAnyKey();
     return false;
 }
-//applying the specific note effect. note is the note applied, target refers to the enemy
+//applying the specific note effect
+//note: is the note applied
+//target: the enemy
 void CombatPlayer::applyNoteEffect(Note note,Character &target){
     const NoteEffect *effect=getNoteEffect(note);
     if(!effect)return ;
@@ -279,13 +287,13 @@ void CombatPlayer::applyNoteEffect(Note note,Character &target){
             applyNoteEffect(randomNote,target);
             break;}
         case SI:
-            {if(resonance>=10){
-                    changeResonance(-10);
+            {if(resonance>=30){
+                    changeResonance(-30);
                     extraTurns+=2;
                     cout<<WHITE<<"Aquire extra turns"<<RESET<<endl;
                 }
                 else {
-                    cout<<RED<<"Not enough resonance! 5 resonance needed"<<RESET<<endl;
+                    cout<<RED<<"Not enough resonance! 30 resonance needed"<<RESET<<endl;
                     // InputSystem::waitForAnyKey();
                 }
                 
@@ -294,7 +302,9 @@ void CombatPlayer::applyNoteEffect(Note note,Character &target){
             break;
     }
 }
-//apply the rune effects, rune is the rune applied, target refers to the enemy
+//apply the rune effects
+//rune: the rune applied
+//target: to the enemy
 void CombatPlayer::applyRuneEffect(const Rune &rune,Character &target){
     int effectPower=rune.power+(harmony*2)+(combo/2);
     cout<<BOLD<<rune.color<<"\n"<<rune.name<<" activated"<<RESET<<endl;
@@ -317,7 +327,9 @@ void CombatPlayer::applyRuneEffect(const Rune &rune,Character &target){
     resetCombo();
     // InputSystem::waitForAnyKey();
 }
-// 15 resonance is needed for activating the rune
+//15 resonance is needed for activating the rune
+//runeIndex: the index of applied rune
+//target: the target the rune is applied on
 void CombatPlayer::activeRune(int runeIndex,Character &target){
     const auto &rune=runes[runeIndex];
     if(resonance>=15){
@@ -335,7 +347,7 @@ void CombatPlayer::activeRune(int runeIndex,Character &target){
 void CombatPlayer::resetTurn(){
     defense=0;
 }
-
+//return the amount of Weapon Bonus Damage
 int CombatPlayer::getWeaponBonusDamage(){
     if(weaponBonusDamage <= 0) return 0;
     if(!weaponNeedsAmmo) return weaponBonusDamage;

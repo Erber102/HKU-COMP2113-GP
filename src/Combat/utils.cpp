@@ -50,6 +50,8 @@ void Terminal::clearScreen(){
     cout<<"\033[2J\033[1;1H";
 }
 //the size of the terminal is saved in "rows" and "cols"
+//rows: number of rows of the terminal
+//cols: number of columns of the terminal
 void Terminal::getTerminalSize(int &rows,int &cols){
     struct winsize w;
     ioctl(STDOUT_FILENO,TIOCGWINSZ, &w);
@@ -67,6 +69,7 @@ int Terminal::getTerminalWidth(){
     return terminalWidth;
 }
 //draw separating line
+//length: the length of the separating line
 void Terminal::drawSeparator(int length){
     if(length==-1){
         length=getTerminalWidth()-2;
@@ -77,6 +80,7 @@ void Terminal::drawSeparator(int length){
     cout<<RESET<<endl;
 }
 //draw "title" suiting the size of the terminal
+//title: content of title
 void Terminal::drawTitle(string title){
     int width=getTerminalWidth();
     int padding=(width-title.length()-4)/2;
@@ -86,6 +90,7 @@ void Terminal::drawTitle(string title){
     cout<<title<<RESET<<endl;
 }
 //notes to string
+//note: note needed
 string Utils::noteToString(Note note){
     switch(note){
         case DO:return "Do";
@@ -107,10 +112,14 @@ void Utils::waitForAnyKey(){
     Terminal::getch();
 }
 //wait for "ms" ms
+//ms: time for waiting
 void Utils::sleepMs(int ms){
     this_thread::sleep_for(chrono::milliseconds(ms));
 }
-//create the format of the health bar
+//create the format of the health bar and returns the bar
+//current: current health
+//max: maximum health
+//width: width of terminal
 string Utils::formatHealthBar(int current,int max,int width){
     double percent=(double)current/max;
     int filled=width*percent;
@@ -128,7 +137,9 @@ string Utils::formatHealthBar(int current,int max,int width){
     bar+="] "+to_string(current)+"/"+to_string(max)+" HP";
     return bar;
 }
-//create the format of the resonance bar
+//create the format of the resonance bar and returns the resonance bar
+//current: current resonance
+//width: width of the terminal
 string Utils::formatResonanceBar(int current,int width){
     double percent=(double)current/100;
     int filled=width*percent;
@@ -143,7 +154,9 @@ string Utils::formatResonanceBar(int current,int width){
     bar+="]"+to_string(current)+"/100";
     return bar;
 }
-//random number generator
+//random number generator, returns a random number
+//leftbound: minimum of the random number
+//right bound: maximum of the random number
 int Utils::randomInt(int leftBound,int rightBound){
     return rand()%(rightBound-leftBound+1)+leftBound;
 }

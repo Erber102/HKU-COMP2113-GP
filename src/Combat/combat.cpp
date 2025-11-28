@@ -57,6 +57,7 @@ void Combat::fightEnemy(int enemyIndex){
             player->takeTurn(enemy);
             if(!enemy.isAlive())break;
         }
+        if(!enemy.isAlive())break;
         enemy.resetTurn();
         enemy.takeTurn(*player);
     }

@@ -17,26 +17,68 @@ private:
     static std::string saveFileName;  // Static save file name
 
     // Internal serialization methods
-    static void serializePlayer(std::ofstream& file, Player& player);     // Serialize player data
-    static bool deserializePlayer(std::ifstream& file, Player& player);  // Deserialize player data
+    /**
+     * @brief Serialize player data to file
+     * @param file Input: Output file stream to write to
+     * @param player Input: Player object to serialize
+     * @return void
+     */
+    static void serializePlayer(std::ofstream& file, Player& player);     
+
+    /**
+     * @brief Deserialize player data from file
+     * @param file Input: Input file stream to read from
+     * @param player Output: Player object to populate with deserialized data
+     * @return bool: True if deserialization succeeded, false otherwise
+     */
+    static bool deserializePlayer(std::ifstream& file, Player& player);  
     
     // Inventory serialization
-    static void serializeInventory(std::ofstream& file, std::vector<Item*>& inventory);     // Serialize inventory data
-    static bool deserializeInventory(std::ifstream& file, Player& player);                  // Deserialize inventory data
-    
+    /**
+     * @brief Serialize inventory data to file
+     * @param file Input: Output file stream to write to
+     * @param inventory Input: Inventory vector to serialize
+     * @return void
+     */
+    static void serializeInventory(std::ofstream& file, std::vector<Item*>& inventory);     
+
+    /**
+     * @brief Deserialize inventory data from file
+     * @param file Input: Input file stream to read from
+     * @param player Output: Player object to populate with deserialized inventory
+     * @return bool: True if deserialization succeeded, false otherwise
+     */
+    static bool deserializeInventory(std::ifstream& file, Player& player);                  
+
     // MarketTrends serialization - temporarily removed
 
 public:
-    // Save game state
+    /**
+     * @brief Save current game state to file
+     * @param player Input: Player object to save
+     * @param day Input: Current game day to save
+     * @return void
+     */
     static void saveGame(Player& player, int day);
 
-    // Load game state
+    /**
+     * @brief Load game state from file
+     * @param player Output: Player object to populate with loaded data
+     * @param day Output: Variable to store loaded game day
+     * @return bool: True if load succeeded, false otherwise
+     */
     static bool loadGame(Player& player, int& day);
     
-    // Check if save file exists
+    /**
+     * @brief Check if save file exists
+     * @return bool: True if save file exists, false otherwise
+     */
     static bool saveExists();
     
-    // Delete save file
+    /**
+     * @brief Delete existing save file
+     * @return void
+     */
     static void deleteSave();
     
     // Demand growth function - temporarily removed
